@@ -1,0 +1,52 @@
+{
+  "name": "AffectivFeedbackBotV1_3",
+  "padlock": "wPH7+9gJfWyjoQkUj/2MZg==!i+f9SnYsXTwF2aOuQry8klXVUP9ipLh06LeZx0zdNAD6Mia87SCbOCrJquX853U1",
+  "version": "2.0",
+  "services": [
+    {
+      "tenantId": "95b4ae64-267e-4212-97c3-0230571e3773",
+      "subscriptionId": "ad111866-e815-46f5-b19d-28610eba4875",
+      "resourceGroup": "Bachelorarbeit",
+      "serviceName": "AffectivFeedbackBotV1_3",
+      "type": "abs",
+      "name": "AffectivFeedbackBotV1_3",
+      "id": "1"
+    },
+    {
+      "connectionString": "0j/vTYV5TP33y5MXOnxZBA==!bYIhPv1MjNbIeHe+djmreu/cWi6uYowTTzAtgXjVXmz8bwSmTkcxDs4fy8b6KiPS6ZgftqdR5gQIynBsJBgNPf/lIwClgX6xFKdCLj0Yvn2j3fMYnwQ3DAXPFHTulgLiMoflvizeOu7DUQfHhejOpGq+5mlOrzjyaJs5TnOTzwbJ9w+vGIuRw6n8Csv4cYgKHeQ2Mf0fCWfApNwnPwMHPsmtDRjvIXj3M5K6f7KnLzU=",
+      "tenantId": "95b4ae64-267e-4212-97c3-0230571e3773",
+      "subscriptionId": "ad111866-e815-46f5-b19d-28610eba4875",
+      "resourceGroup": "Bachelorarbeit",
+      "serviceName": "affectivfeedbackbotv1389",
+      "type": "blob",
+      "id": "2"
+    },
+    {
+      "appId": "",
+      "appPassword": "",
+      "endpoint": "http://localhost:3978/api/messages",
+      "type": "endpoint",
+      "name": "development",
+      "id": "3"
+    },
+    {
+      "appId": "de00ff85-d004-441f-954c-4b512497a886",
+      "appPassword": "LPGC4IgZSvbrli/NdOcGag==!8RqXSOyPYTM+woA0+VZJb3ppfcKTnh2fEgV/u9XT4Dw=",
+      "endpoint": "https://affectivfeedbackbotv13.azurewebsites.net/api/messages",
+      "type": "endpoint",
+      "name": "production",
+      "id": "4"
+    },
+    {
+      "instrumentationKey": "e0m2uh8SECR1YZM3KqgU/w==!FdRz1siNYV7JuNzoJLp2k/230S1iqEDrh3DDZUY6SYcOIhNmO2YL2QILc0EdqfTv",
+      "applicationId": "12f7765b-5dc7-4d39-a778-22cca372c77e",
+      "apiKeys": {},
+      "tenantId": "95b4ae64-267e-4212-97c3-0230571e3773",
+      "subscriptionId": "ad111866-e815-46f5-b19d-28610eba4875",
+      "resourceGroup": "Bachelorarbeit",
+      "serviceName": "AffectivFeedbackBotV1_3p57n4x",
+      "type": "appInsights",
+      "id": "5"
+    }
+  ]
+}
