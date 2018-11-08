@@ -70,32 +70,55 @@ namespace Microsoft.BotBuilderSamples
             // see https://aka.ms/about-bot-activity-message to learn more about the message and other activity types
             if (turnContext.Activity.Type == ActivityTypes.Message)
             {
-                string username = "c33ec0e1-58de-4dbb-987c-0a425f983a84";
-                string password = "5CsVdSN3ZXZn";
-                var versionDate = "2017-09-21";
-
-                ToneAnalyzerService toneAnalyzer = new ToneAnalyzerService(username, password, versionDate);
-
-                ToneInput toneInput = new ToneInput()
-                {
-                    Text = turnContext.Activity.Text,
-                };
-
-                Utterance input = new Utterance()
-                {
-                    Text = turnContext.Activity.Text,
-                    User = turnContext.Activity.From.Name,
-                };
-
-                toneChatInput.Utterances.Add(input);
-
-                var postToneResult = toneAnalyzer.ToneChat(toneChatInput, "application/json", null);
+                var response = turnContext.Activity.CreateReply();
 
                 // Get the conversation state from the turn context.
                 var state = await _accessors.CounterState.GetAsync(turnContext, () => new CounterState());
 
-                // Bump the turn count for this conversation.
-                state.TurnCount++;
+                if (turnContext.Activity.Text.ToLower() == "emoji")
+                {
+                    state.FeedbackType = turnContext.Activity.Text.ToLower();
+                    response.Text = "Feedback Type changed to: Emoji";
+                }
+                else if (turnContext.Activity.Text.ToLower() == "graph")
+                {
+                    state.FeedbackType = turnContext.Activity.Text.ToLower();
+                    response.Text = "Feedback Type changed to: Graph";
+                }
+                else
+                {
+                    string username = "c33ec0e1-58de-4dbb-987c-0a425f983a84";
+                    string password = "5CsVdSN3ZXZn";
+                    var versionDate = "2017-09-21";
+
+                    ToneAnalyzerService toneAnalyzer = new ToneAnalyzerService(username, password, versionDate);
+
+                    ToneInput toneInput = new ToneInput()
+                    {
+                        Text = turnContext.Activity.Text,
+                    };
+
+                    /**
+                    Utterance input = new Utterance()
+                    {
+                        Text = turnContext.Activity.Text,
+                        User = turnContext.Activity.From.Name,
+                    };
+
+                    toneChatInput.Utterances.Add(input);
+                    */
+                    var postToneResult = toneAnalyzer.Tone(toneInput, "application/json", null);
+
+                    // foreach (Tone tone in tones)
+                    if (state.FeedbackType == "emoji")
+                    {
+                        response.Text = EmojiResponseGenerator(postToneResult);
+                    }
+                    else if (state.FeedbackType == "graph")
+                    {
+                        response.Attachments = new List<Attachment>() { GraphResponseGenerator(postToneResult, state).ToAttachment() };
+                    }
+                }
 
                 // Set the property using the accessor.
                 await _accessors.CounterState.SetAsync(turnContext, state);
@@ -103,55 +126,121 @@ namespace Microsoft.BotBuilderSamples
                 // Save the new turn count into the conversation state.
                 await _accessors.ConversationState.SaveChangesAsync(turnContext);
 
-                // Echo back to the state of the user.
-                string responseMessage = null;
-
-                // foreach (Tone tone in tones)
-                foreach (UtteranceAnalysis utterance_Tone in postToneResult.UtterancesTone)
-                {
-                    foreach (ToneChatScore tone in utterance_Tone.Tones)
-                    {
-                        if (tone.ToneId == ToneChatScore.ToneIdEnum.EXCITED)
-                        {
-                            responseMessage += $"You feel '{tone.ToneName}' with a score of: {tone.Score}\n \U0001F917 \n";
-                        }
-                        else if (tone.ToneId == ToneChatScore.ToneIdEnum.FRUSTRATED)
-                        {
-                            responseMessage += $"You feel '{tone.ToneName}' with a score of: {tone.Score}\n \U0001F612 \n";
-                        }
-                        else if (tone.ToneId == ToneChatScore.ToneIdEnum.IMPOLITE)
-                        {
-                            responseMessage += $"You feel '{tone.ToneName}' with a score of: {tone.Score}\n \U0001F620 \n";
-                        }
-                        else if (tone.ToneId == ToneChatScore.ToneIdEnum.POLITE)
-                        {
-                            responseMessage += $"You feel '{tone.ToneName}' with a score of: {tone.Score}\n \U0001F642 \n";
-                        }
-                        else if (tone.ToneId == ToneChatScore.ToneIdEnum.SAD)
-                        {
-                            responseMessage += $"You feel '{tone.ToneName}' with a score of: {tone.Score}\n \U0001F642 \n";
-                        }
-                        else if (tone.ToneId == ToneChatScore.ToneIdEnum.SATISFIED)
-                        {
-                            responseMessage += $"You feel '{tone.ToneName}' with a score of: {tone.Score}\n \U0001F60A \n";
-                        }
-                        else if (tone.ToneId == ToneChatScore.ToneIdEnum.SYMPATHETIC)
-                        {
-                            responseMessage += $"You feel '{tone.ToneName}' with a score of: {tone.Score}\n \U0001F600 \n";
-                        }
-                        else
-                        {
-                            responseMessage += "No Tone detected.";
-                        }
-                    }
-
-                    await turnContext.SendActivityAsync(responseMessage);
-                }
+                await turnContext.SendActivityAsync(response);
             }
             else
             {
                 await turnContext.SendActivityAsync($"{turnContext.Activity.Type} event detected");
             }
+        }
+
+        public string EmojiResponseGenerator(ToneAnalysis postReponse)
+        {
+            string responseMessage = null;
+
+            foreach (ToneScore tone in postReponse.DocumentTone.Tones)
+            {
+                    if (tone.ToneId == "joy")
+                    {
+                        responseMessage += $"You feel '{tone.ToneName}' with a score of: {tone.Score}\n \U0001F917 \n";
+                    }
+                    else if (tone.ToneId == "anger")
+                    {
+                        responseMessage += $"You feel '{tone.ToneName}' with a score of: {tone.Score}\n \U0001F612 \n";
+                    }
+                    else if (tone.ToneId == "sadness")
+                    {
+                        responseMessage += $"You feel '{tone.ToneName}' with a score of: {tone.Score}\n \U0001F642 \n";
+                    }
+                    else if (tone.ToneId == "fear")
+                    {
+                        responseMessage += $"You feel '{tone.ToneName}' with a score of: {tone.Score}\n \U0001F600 \n";
+                    }
+                    else
+                    {
+                        responseMessage += "No Tone detected.";
+                    }
+            }
+
+            return responseMessage;
+        }
+
+        public HeroCard GraphResponseGenerator(ToneAnalysis postReponse, CounterState state)
+        {
+            string graphURL = "https://chart.googleapis.com/chart?cht=lc&chco=FF0000,00FF00,0000FF,000000&chs=250x150&chxt=x,y&chd=t4:";
+
+            int joy = 0;
+            int anger = 0;
+            int sadness = 0;
+            int fear = 0;
+
+            foreach (ToneScore tone in postReponse.DocumentTone.Tones)
+            {
+                int score = (int)(100 * tone.Score);
+
+                if (tone.ToneId == "joy")
+                {
+                    joy = score;
+                }
+                else if (tone.ToneId == "anger")
+                {
+                    anger = score;
+                }
+                else if (tone.ToneId == "sadness")
+                {
+                    sadness = score;
+                }
+                else if (tone.ToneId == "fear")
+                {
+                    fear = score;
+                }
+            }
+
+            if (state.Joy == string.Empty)
+                {
+                    state.Joy += joy;
+                }
+                else
+                {
+                    state.Joy += "," + joy;
+                }
+
+            if (state.Anger == string.Empty)
+                {
+                    state.Anger += anger;
+                }
+                else
+                {
+                    state.Anger += "," + anger;
+                }
+
+            if (state.Sadness == string.Empty)
+                {
+                    state.Sadness += sadness;
+                }
+                else
+                {
+                    state.Sadness += "," + sadness;
+                }
+
+            if (state.Fear == string.Empty)
+                {
+                    state.Fear += fear;
+                }
+                else
+                {
+                    state.Fear += "," + fear;
+                }
+
+            graphURL = graphURL + state.Anger + '|' + state.Fear + '|' + state.Joy + '|' + state.Sadness;
+
+            HeroCard heroCard = new HeroCard
+            {
+                Text = "Your current State: ",
+                Images = new List<CardImage> { new CardImage(graphURL) },
+            };
+
+            return heroCard;
         }
     }
 }

@@ -15,5 +15,15 @@ namespace Microsoft.BotBuilderSamples
         /// </summary>
         /// <value>The number of turns in the conversation.</value>
         public int TurnCount { get; set; } = 0;
+
+        public string FeedbackType { get; set; } = "emoji";
+
+        public string Joy { get; set; } = string.Empty;
+
+        public string Anger { get; set; } = string.Empty;
+
+        public string Sadness { get; set; } = string.Empty;
+
+        public string Fear { get; set; } = string.Empty;
     }
 }
