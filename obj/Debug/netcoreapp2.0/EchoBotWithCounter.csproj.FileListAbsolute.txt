@@ -1,0 +1,13 @@
+C:\Users\Marcel\AffectiveFeedbackBots\AffectiveFeedbackBotV1_3\bin\Debug\netcoreapp2.0\AffectivFeedbackBotV1_3.bot
+C:\Users\Marcel\AffectiveFeedbackBots\AffectiveFeedbackBotV1_3\bin\Debug\netcoreapp2.0\BotConfiguration.bot
+C:\Users\Marcel\AffectiveFeedbackBots\AffectiveFeedbackBotV1_3\bin\Debug\netcoreapp2.0\EchoBotWithCounter.deps.json
+C:\Users\Marcel\AffectiveFeedbackBots\AffectiveFeedbackBotV1_3\bin\Debug\netcoreapp2.0\EchoBotWithCounter.runtimeconfig.json
+C:\Users\Marcel\AffectiveFeedbackBots\AffectiveFeedbackBotV1_3\bin\Debug\netcoreapp2.0\EchoBotWithCounter.runtimeconfig.dev.json
+C:\Users\Marcel\AffectiveFeedbackBots\AffectiveFeedbackBotV1_3\bin\Debug\netcoreapp2.0\EchoBotWithCounter.dll
+C:\Users\Marcel\AffectiveFeedbackBots\AffectiveFeedbackBotV1_3\obj\Debug\netcoreapp2.0\EchoBotWithCounter.csprojAssemblyReference.cache
+C:\Users\Marcel\AffectiveFeedbackBots\AffectiveFeedbackBotV1_3\obj\Debug\netcoreapp2.0\EchoBotWithCounter.csproj.CoreCompileInputs.cache
+C:\Users\Marcel\AffectiveFeedbackBots\AffectiveFeedbackBotV1_3\obj\Debug\netcoreapp2.0\EchoBotWithCounter.AssemblyInfoInputs.cache
+C:\Users\Marcel\AffectiveFeedbackBots\AffectiveFeedbackBotV1_3\obj\Debug\netcoreapp2.0\EchoBotWithCounter.AssemblyInfo.cs
+C:\Users\Marcel\AffectiveFeedbackBots\AffectiveFeedbackBotV1_3\bin\Debug\netcoreapp2.0\EchoBotWithCounter.pdb
+C:\Users\Marcel\AffectiveFeedbackBots\AffectiveFeedbackBotV1_3\obj\Debug\netcoreapp2.0\EchoBotWithCounter.dll
+C:\Users\Marcel\AffectiveFeedbackBots\AffectiveFeedbackBotV1_3\obj\Debug\netcoreapp2.0\EchoBotWithCounter.pdb
