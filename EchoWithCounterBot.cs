@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -85,6 +86,11 @@ namespace Microsoft.BotBuilderSamples
                     state.FeedbackType = turnContext.Activity.Text.ToLower();
                     response.Text = "Feedback Type changed to: Graph";
                 }
+                else if (turnContext.Activity.Text.ToLower() == "scatter")
+                {
+                    state.FeedbackType = turnContext.Activity.Text.ToLower();
+                    response.Text = "Feedback Type changed to: Scatter";
+                }
                 else
                 {
                     string username = "c33ec0e1-58de-4dbb-987c-0a425f983a84";
@@ -117,6 +123,10 @@ namespace Microsoft.BotBuilderSamples
                     else if (state.FeedbackType == "graph")
                     {
                         response.Attachments = new List<Attachment>() { GraphResponseGenerator(postToneResult, state).ToAttachment() };
+                    }
+                    else if (state.FeedbackType == "scatter")
+                    {
+                        response.Attachments = new List<Attachment>() { ScatterResponseGenerator(postToneResult, state).ToAttachment() };
                     }
                 }
 
@@ -233,6 +243,82 @@ namespace Microsoft.BotBuilderSamples
                 }
 
             graphURL = graphURL + state.Anger + '|' + state.Fear + '|' + state.Joy + '|' + state.Sadness;
+
+            HeroCard heroCard = new HeroCard
+            {
+                Text = "Your current State: ",
+                Images = new List<CardImage> { new CardImage(graphURL) },
+            };
+
+            return heroCard;
+        }
+
+        public HeroCard ScatterResponseGenerator(ToneAnalysis postReponse, CounterState state)
+        {
+            string graphURL = "https://chart.googleapis.com/chart?cht=s&chs=250x200&chf=c,lg,135,cc3300,0,008000,0.5&chxt=x,y,r&chxr=0,%2D1,1|1,%2D1,1&chxs=0,ff0000|1,0000ff&chd=t:";
+
+            double joy = 0;
+            double anger = 0;
+            double sadness = 0;
+            double fear = 0;
+            int x = 0;
+            int y = 0;
+
+            foreach (ToneScore tone in postReponse.DocumentTone.Tones)
+            {
+                if (tone.ToneId == "joy")
+                {
+                    joy = (double)tone.Score;
+                }
+                else if (tone.ToneId == "anger")
+                {
+                    anger = (double)tone.Score;
+                }
+                else if (tone.ToneId == "sadness")
+                {
+                    sadness = (double)tone.Score;
+                }
+                else if (tone.ToneId == "fear")
+                {
+                    fear = (double)tone.Score;
+                }
+            }
+
+            if ((Math.Ceiling(joy) + Math.Ceiling(anger) + Math.Ceiling(fear) + Math.Ceiling(sadness)) != 0)
+            {
+                x = 50 + (int)(50 * (joy + anger + fear - sadness) / (Math.Ceiling(joy) + Math.Ceiling(anger) + Math.Ceiling(fear) + Math.Ceiling(sadness)));
+                y = 50 + (int)(50 * (joy - anger - fear - sadness) / (Math.Ceiling(joy) + Math.Ceiling(anger) + Math.Ceiling(fear) + Math.Ceiling(sadness)));
+            }
+
+            if (state.X == string.Empty)
+            {
+                state.X += x;
+            }
+            else
+            {
+                state.X += "," + x;
+            }
+
+            if (state.Y == string.Empty)
+            {
+                state.Y += y;
+            }
+            else
+            {
+                state.Y += "," + y;
+            }
+
+            List<int> updatedRadius = new List<int>();
+            state.Radius.ForEach(radius => updatedRadius.Add(radius - 10));
+            updatedRadius.Add(100);
+            state.Radius = updatedRadius;
+
+            string radiusString = string.Empty;
+            state.Radius.ForEach(radius => radiusString += radius + ",");
+
+            radiusString = radiusString.Remove(radiusString.Length - 1);
+
+            graphURL = graphURL + state.X + '|' + state.Y + "|" + radiusString;
 
             HeroCard heroCard = new HeroCard
             {

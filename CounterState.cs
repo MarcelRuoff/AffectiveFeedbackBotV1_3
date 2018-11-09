@@ -1,6 +1,8 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+using System.Collections.Generic;
+
 namespace Microsoft.BotBuilderSamples
 {
     /// <summary>
@@ -25,5 +27,11 @@ namespace Microsoft.BotBuilderSamples
         public string Sadness { get; set; } = string.Empty;
 
         public string Fear { get; set; } = string.Empty;
+
+        public string X { get; set; } = string.Empty;
+
+        public string Y { get; set; } = string.Empty;
+
+        public List<int>Radius { get; set; } = new List<int>();
     }
 }
