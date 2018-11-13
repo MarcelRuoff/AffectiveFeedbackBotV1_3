@@ -1,7 +1,9 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+using EchoBotWithCounter;
 using System.Collections.Generic;
+ 
 
 namespace Microsoft.BotBuilderSamples
 {
@@ -32,6 +34,8 @@ namespace Microsoft.BotBuilderSamples
 
         public string Y { get; set; } = string.Empty;
 
-        public List<int>Radius { get; set; } = new List<int>();
+        public List<int> Radius { get; set; } = new List<int>();
+
+        public List<User> Users { get; set; } = new List<User>();
     }
 }

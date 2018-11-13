@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using EchoBotWithCounter;
 using IBM.WatsonDeveloperCloud.ToneAnalyzer.v3;
 using IBM.WatsonDeveloperCloud.ToneAnalyzer.v3.Model;
 using Microsoft.Bot.Builder;
@@ -76,6 +77,24 @@ namespace Microsoft.BotBuilderSamples
                 // Get the conversation state from the turn context.
                 var state = await _accessors.CounterState.GetAsync(turnContext, () => new CounterState());
 
+                bool exist = false;
+                User currentUser = new User();
+
+                foreach (User user in state.Users)
+                {
+                    if (user.UserId == turnContext.Activity.From.Id)
+                    {
+                        exist = true;
+                        currentUser = user;
+                    }
+                }
+
+                if (exist == false)
+                {
+                    currentUser = new User(turnContext.Activity.From.Id);
+                    state.Users.Add(currentUser);
+                }
+
                 if (turnContext.Activity.Text.ToLower() == "emoji")
                 {
                     state.FeedbackType = turnContext.Activity.Text.ToLower();
@@ -126,7 +145,7 @@ namespace Microsoft.BotBuilderSamples
                     }
                     else if (state.FeedbackType == "scatter")
                     {
-                        response.Attachments = new List<Attachment>() { ScatterResponseGenerator(postToneResult, state).ToAttachment() };
+                        response.Attachments = new List<Attachment>() { ScatterResponseGenerator(postToneResult, state, currentUser).ToAttachment() };
                     }
                 }
 
@@ -177,7 +196,7 @@ namespace Microsoft.BotBuilderSamples
 
         public HeroCard GraphResponseGenerator(ToneAnalysis postReponse, CounterState state)
         {
-            string graphURL = "https://chart.googleapis.com/chart?cht=lc&chco=FF0000,00FF00,0000FF,000000&chs=250x150&chxt=x,y&chd=t4:";
+            string graphURL = "https://chart.googleapis.com/chart?cht=lc&chco=FF0000,00FF00,0000FF,000000&chdl=Anger|Fear|Joy|Sadness&chs=250x150&chxt=x,y&chd=t4:";
 
             int joy = 0;
             int anger = 0;
@@ -253,9 +272,8 @@ namespace Microsoft.BotBuilderSamples
             return heroCard;
         }
 
-        public HeroCard ScatterResponseGenerator(ToneAnalysis postReponse, CounterState state)
+        public HeroCard ScatterResponseGenerator(ToneAnalysis postReponse, CounterState state, User currentUser)
         {
-            string graphURL = "https://chart.googleapis.com/chart?cht=s&chs=250x200&chf=c,lg,135,cc3300,0,008000,0.5&chxt=x,y,r&chxr=0,%2D1,1|1,%2D1,1&chxs=0,ff0000|1,0000ff&chd=t:";
 
             double joy = 0;
             double anger = 0;
@@ -290,24 +308,45 @@ namespace Microsoft.BotBuilderSamples
                 y = 50 + (int)(50 * (joy - anger - fear - sadness) / (Math.Ceiling(joy) + Math.Ceiling(anger) + Math.Ceiling(fear) + Math.Ceiling(sadness)));
             }
 
-            if (state.X == string.Empty)
+            if (currentUser.X == 0)
             {
-                state.X += x;
+                currentUser.X += x;
             }
             else
             {
-                state.X += "," + x;
+                currentUser.X = (int)((0.4 * x) + (0.6 * currentUser.X));
             }
 
-            if (state.Y == string.Empty)
+            if (currentUser.Y == 0)
             {
-                state.Y += y;
+                currentUser.Y += y;
             }
             else
             {
-                state.Y += "," + y;
+                currentUser.Y = (int)((0.4 * y) + (0.6 * currentUser.Y));
             }
 
+            List<User> updatedUsers = new List<User>();
+            string finalX = string.Empty;
+            string finalY = string.Empty;
+            foreach (User user in state.Users)
+            {
+                if (user.UserId == currentUser.UserId)
+                {
+                    updatedUsers.Add(currentUser);
+                    finalX += currentUser.X + ",";
+                    finalY += currentUser.Y + ",";
+                }
+                else
+                {
+                    updatedUsers.Add(user);
+                    finalX += user.X + ",";
+                    finalY += user.Y + ",";
+                }
+            }
+
+            state.Users = updatedUsers;
+            /**
             List<int> updatedRadius = new List<int>();
             state.Radius.ForEach(radius => updatedRadius.Add(radius - 10));
             updatedRadius.Add(100);
@@ -317,8 +356,11 @@ namespace Microsoft.BotBuilderSamples
             state.Radius.ForEach(radius => radiusString += radius + ",");
 
             radiusString = radiusString.Remove(radiusString.Length - 1);
+    */
+            finalX = finalX.Remove(finalX.Length - 1);
+            finalY = finalY.Remove(finalY.Length - 1);
 
-            graphURL = graphURL + state.X + '|' + state.Y + "|" + radiusString;
+            string graphURL = $"https://chart.googleapis.com/chart?cht=s&chs=250x200&chf=c,lg,135,cc3300,0,008000,0.5&chco=FF0000,00FF00,0000FF,000000&chxt=x,y,r&chxr=0,%2D1,1|1,%2D1,1&chxs=0,ff0000|1,0000ff&chd=t:" + finalX + "|" + finalY;
 
             HeroCard heroCard = new HeroCard
             {
