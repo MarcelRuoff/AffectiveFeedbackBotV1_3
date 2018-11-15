@@ -368,7 +368,7 @@ namespace Microsoft.BotBuilderSamples
             finalX = finalX.Remove(finalX.Length - 1);
             finalY = finalY.Remove(finalY.Length - 1);
 
-            string graphURL = $"https://chart.googleapis.com/chart?cht=s&chs=270x200&chf=c,lg,0,008000,0.3,ff0000,1&chm=r,008000,0,1,0.5|R,008000,0,0,0.3&chco=000000|0c00fc|5700a3,ffffff&chxt=x,y&chdl=User1|User2&chxr=0,%2D1,1|1,%2D1,1&chxs=0,ff0000|1,0000ff&chd=t:" + finalX + "|" + finalY;
+            string graphURL = $"https://chart.googleapis.com/chart?cht=s&chs=270x200&chm=R,d10300,0,0.5,1|R,ffd800,0,0,0.5|r,008000,0,1,0.5&chco=000000|0c00fc|5700a3,ffffff&chxt=x,y&chdl=User1|User2&chxr=0,-1,1|1,-1,1&chxs=0,ff0000|1,0000ff&chd=t:" + finalX + "|" + finalY;
 
             HeroCard heroCard = new HeroCard
             {
