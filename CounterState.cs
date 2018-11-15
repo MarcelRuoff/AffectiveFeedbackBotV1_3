@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 using EchoBotWithCounter;
+using System;
 using System.Collections.Generic;
  
 
@@ -37,5 +38,7 @@ namespace Microsoft.BotBuilderSamples
         public List<int> Radius { get; set; } = new List<int>();
 
         public List<User> Users { get; set; } = new List<User>();
+
+        public DateTime Date { get; set; } = DateTime.Now;
     }
 }

@@ -79,6 +79,7 @@ namespace Microsoft.BotBuilderSamples
 
                 bool exist = false;
                 User currentUser = new User();
+                TimeSpan difference = DateTime.Now - state.Date;
 
                 foreach (User user in state.Users)
                 {
@@ -147,6 +148,13 @@ namespace Microsoft.BotBuilderSamples
                     {
                         response.Attachments = new List<Attachment>() { ScatterResponseGenerator(postToneResult, state, currentUser).ToAttachment() };
                     }
+
+                }
+
+                if (difference >= TimeSpan.FromMinutes(1))
+                {
+                    await turnContext.SendActivityAsync(response);
+                    state.Date = DateTime.Now;
                 }
 
                 // Set the property using the accessor.
@@ -154,8 +162,6 @@ namespace Microsoft.BotBuilderSamples
 
                 // Save the new turn count into the conversation state.
                 await _accessors.ConversationState.SaveChangesAsync(turnContext);
-
-                await turnContext.SendActivityAsync(response);
             }
             else
             {
@@ -302,10 +308,12 @@ namespace Microsoft.BotBuilderSamples
                 }
             }
 
+            int numberOfTones = (int)(Math.Ceiling(joy) + Math.Ceiling(anger) + Math.Ceiling(fear) + Math.Ceiling(sadness));
+
             if ((Math.Ceiling(joy) + Math.Ceiling(anger) + Math.Ceiling(fear) + Math.Ceiling(sadness)) != 0)
             {
-                x = 50 + (int)(50 * (joy + anger + fear - sadness) / (Math.Ceiling(joy) + Math.Ceiling(anger) + Math.Ceiling(fear) + Math.Ceiling(sadness)));
-                y = 50 + (int)(50 * (joy - anger - fear - sadness) / (Math.Ceiling(joy) + Math.Ceiling(anger) + Math.Ceiling(fear) + Math.Ceiling(sadness)));
+                x = 50 + (int)Math.Ceiling(49 * (joy + anger + fear - sadness) / numberOfTones);
+                y = 50 + (int)Math.Ceiling(49 * (joy - anger - fear - sadness) / numberOfTones);
             }
 
             if (currentUser.X == 0)
@@ -360,7 +368,7 @@ namespace Microsoft.BotBuilderSamples
             finalX = finalX.Remove(finalX.Length - 1);
             finalY = finalY.Remove(finalY.Length - 1);
 
-            string graphURL = $"https://chart.googleapis.com/chart?cht=s&chs=250x200&chf=c,lg,135,cc3300,0,008000,0.5&chco=FF0000,00FF00,0000FF,000000&chxt=x,y,r&chxr=0,%2D1,1|1,%2D1,1&chxs=0,ff0000|1,0000ff&chd=t:" + finalX + "|" + finalY;
+            string graphURL = $"https://chart.googleapis.com/chart?cht=s&chs=270x200&chf=c,lg,0,008000,0.3,ff0000,1&chm=r,008000,0,1,0.5|R,008000,0,0,0.3&chco=000000|0c00fc|5700a3,ffffff&chxt=x,y&chdl=User1|User2&chxr=0,%2D1,1|1,%2D1,1&chxs=0,ff0000|1,0000ff&chd=t:" + finalX + "|" + finalY;
 
             HeroCard heroCard = new HeroCard
             {
