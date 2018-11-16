@@ -40,5 +40,9 @@ namespace Microsoft.BotBuilderSamples
         public List<User> Users { get; set; } = new List<User>();
 
         public DateTime Date { get; set; } = DateTime.Now;
+
+        public string SQLightDatabase { get; set; } = string.Empty;
+
+        public TimeSpan NeededDifference { get; set; } = TimeSpan.FromMinutes(0);
     }
 }

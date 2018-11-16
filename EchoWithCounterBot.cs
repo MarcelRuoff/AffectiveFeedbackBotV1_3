@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Data.SQLite;
 using System.Threading;
 using System.Threading.Tasks;
 using EchoBotWithCounter;
@@ -80,6 +81,28 @@ namespace Microsoft.BotBuilderSamples
                 bool exist = false;
                 User currentUser = new User();
                 TimeSpan difference = DateTime.Now - state.Date;
+                SQLiteConnection dbConnection = null;
+
+                if (state.SQLightDatabase == string.Empty)
+                {
+                    string database = "ChatHistory-" + DateTime.Now.ToLongTimeString() + ".sqlite";
+                    database = database.Replace(":", "-");
+                    SQLiteConnection.CreateFile(database);
+
+                    state.SQLightDatabase = database;
+
+                    dbConnection = new SQLiteConnection($"Data Source = {database}");
+                    dbConnection.Open();
+
+                    string sql = "CREATE TABLE chathistory(user TEXT, message TEXT)";
+                    SQLiteCommand command = new SQLiteCommand(sql, dbConnection);
+                    command.ExecuteNonQuery();
+                }
+                else
+                {
+                    dbConnection = new SQLiteConnection($"Data Source = {state.SQLightDatabase}");
+                    dbConnection.Open();
+                }
 
                 foreach (User user in state.Users)
                 {
@@ -100,16 +123,19 @@ namespace Microsoft.BotBuilderSamples
                 {
                     state.FeedbackType = turnContext.Activity.Text.ToLower();
                     response.Text = "Feedback Type changed to: Emoji";
+                    state.NeededDifference = TimeSpan.FromMinutes(0);
                 }
                 else if (turnContext.Activity.Text.ToLower() == "graph")
                 {
                     state.FeedbackType = turnContext.Activity.Text.ToLower();
                     response.Text = "Feedback Type changed to: Graph";
+                    state.NeededDifference = TimeSpan.FromMinutes(1);
                 }
                 else if (turnContext.Activity.Text.ToLower() == "scatter")
                 {
                     state.FeedbackType = turnContext.Activity.Text.ToLower();
                     response.Text = "Feedback Type changed to: Scatter";
+                    state.NeededDifference = TimeSpan.FromMinutes(1);
                 }
                 else
                 {
@@ -123,6 +149,12 @@ namespace Microsoft.BotBuilderSamples
                     {
                         Text = turnContext.Activity.Text,
                     };
+
+                    string sql = "INSERT INTO chathistory(user, message) VALUES(@user, @message)";
+                    SQLiteCommand command1 = new SQLiteCommand(sql, dbConnection);
+                    command1.Parameters.Add("@user", System.Data.DbType.String).Value = turnContext.Activity.From.Id;
+                    command1.Parameters.Add("@message", System.Data.DbType.String).Value = turnContext.Activity.Text;
+                    command1.ExecuteNonQuery();
 
                     /**
                     Utterance input = new Utterance()
@@ -148,10 +180,9 @@ namespace Microsoft.BotBuilderSamples
                     {
                         response.Attachments = new List<Attachment>() { ScatterResponseGenerator(postToneResult, state, currentUser).ToAttachment() };
                     }
-
                 }
 
-                if (difference >= TimeSpan.FromMinutes(1))
+                if (difference >= state.NeededDifference)
                 {
                     await turnContext.SendActivityAsync(response);
                     state.Date = DateTime.Now;
