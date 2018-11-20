@@ -12,6 +12,7 @@ using IBM.WatsonDeveloperCloud.ToneAnalyzer.v3.Model;
 using Microsoft.Bot.Builder;
 using Microsoft.Bot.Schema;
 using Microsoft.Extensions.Logging;
+using AdaptiveCards;
 
 namespace Microsoft.BotBuilderSamples
 {
@@ -135,7 +136,7 @@ namespace Microsoft.BotBuilderSamples
                 {
                     state.FeedbackType = turnContext.Activity.Text.ToLower();
                     response.Text = "Feedback Type changed to: Scatter";
-                    state.NeededDifference = TimeSpan.FromMinutes(1);
+                    state.NeededDifference = TimeSpan.FromMinutes(0);
                 }
                 else
                 {
@@ -178,7 +179,13 @@ namespace Microsoft.BotBuilderSamples
                     }
                     else if (state.FeedbackType == "scatter")
                     {
-                        response.Attachments = new List<Attachment>() { ScatterResponseGenerator(postToneResult, state, currentUser).ToAttachment() };
+                        Attachment attachment = new Attachment()
+                        {
+                            ContentType = AdaptiveCard.ContentType,
+                            Content = ScatterResponseGenerator(postToneResult, state, currentUser),
+                        };
+
+                        response.Attachments = new List<Attachment>() { attachment };
                     }
                 }
 
@@ -309,7 +316,7 @@ namespace Microsoft.BotBuilderSamples
             return heroCard;
         }
 
-        public HeroCard ScatterResponseGenerator(ToneAnalysis postReponse, CounterState state, User currentUser)
+        public AdaptiveCard ScatterResponseGenerator(ToneAnalysis postReponse, CounterState state, User currentUser)
         {
 
             double joy = 0;
@@ -407,7 +414,25 @@ namespace Microsoft.BotBuilderSamples
                 Images = new List<CardImage> { new CardImage(graphURL) },
             };
 
-            return heroCard;
+            var card = new AdaptiveCard();
+
+            card.Body.Add(new AdaptiveTextBlock() { Text = "Colour", Size = AdaptiveTextSize.Medium, Weight = AdaptiveTextWeight.Bolder });
+            card.Body.Add(new AdaptiveChoiceSetInput()
+            {
+                Id = "Colour",
+                Style = AdaptiveChoiceInputStyle.Compact,
+                Choices = new List<AdaptiveChoice>(new[] {
+                        new AdaptiveChoice() { Title = "Red", Value = "RED" },
+                        new AdaptiveChoice() { Title = "Green", Value = "GREEN" },
+                        new AdaptiveChoice() { Title = "Blue", Value = "BLUE" },
+                }),
+            });
+            card.Body.Add(new AdaptiveTextBlock() { Text = "Registration number:", Size = AdaptiveTextSize.Medium, Weight = AdaptiveTextWeight.Bolder });
+            card.Body.Add(new AdaptiveTextInput() { Style = AdaptiveTextInputStyle.Text, Id = "RegistrationNumber" });
+            card.Actions.Add(new AdaptiveSubmitAction() { Title = "Submit" });
+
+
+            return card;
         }
     }
 }
