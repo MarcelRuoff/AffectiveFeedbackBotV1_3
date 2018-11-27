@@ -1,10 +1,10 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-using EchoBotWithCounter;
 using System;
 using System.Collections.Generic;
- 
+using EchoBotWithCounter;
+using MongoDB.Driver;
 
 namespace Microsoft.BotBuilderSamples
 {
@@ -41,8 +41,12 @@ namespace Microsoft.BotBuilderSamples
 
         public DateTime Date { get; set; } = DateTime.Now;
 
-        public string SQLightDatabase { get; set; } = string.Empty;
+        public string CollectionName { get; set; } = string.Empty;
 
         public TimeSpan NeededDifference { get; set; } = TimeSpan.FromMinutes(0);
+
+        public string ScatterURL { get; set; } = string.Empty;
+
+        public bool SendImage { get; set; } = false;
     }
 }
