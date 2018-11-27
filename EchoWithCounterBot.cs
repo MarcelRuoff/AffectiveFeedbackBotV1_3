@@ -178,6 +178,7 @@ namespace Microsoft.BotBuilderSamples
                     if (state.FeedbackType == "emoji")
                     {
                         response.Text = EmojiResponseGenerator(postToneResult);
+                        response.Text += turnContext.Activity.From.Id;
                     }
                     else if (state.FeedbackType == "graph")
                     {
@@ -471,11 +472,11 @@ namespace Microsoft.BotBuilderSamples
             finalX = finalX.Remove(finalX.Length - 1);
             finalY = finalY.Remove(finalY.Length - 1);
 
-            state.ScatterURL = "https://chart.googleapis.com/chart?cht=s&chs=270x200&chm=R,d10300,0,0.5,1|R,ffd800,0,0,0.5|r,008000,0,1,0.5&chco=000000|0c00fc|5700a3,ffffff&chxt=x,y&chdl=User1|User2&chxr=0,-1,1|1,-1,1&chxs=0,ff0000|1,0000ff&chd=t:" + finalX + "|" + finalY;
+            state.ScatterURL = "https://chart.googleapis.com/chart?cht=s&chs=470x400&chm=R,d10300,0,0.5,1|R,ffd800,0,0,0.5|r,008000,0,1,0.5&chco=000000|0c00fc|5700a3,ffffff&chxt=x,x,y,y&chdl=User1|User2|User3&chxr=0,-1,1|1,-1,1|2,-1,1|3,-1,1&chxl=1:|low%20arousal|high%20arousal|3:|displeasure|pleasure&chxs=0,ff0000|1,ff0000|2,0000ff|3,0000ff&chd=t:" + finalX + "|" + finalY;
 
             List<CardAction> cardButtons = new List<CardAction>()
             {
-                new CardAction() { Title = "Yes, I want to see our current state.", Type = ActionTypes.PostBack, Value = "Yes, I want to see our current state." },
+                new CardAction() { Title = "Yes, I want to see our current state.", Type = ActionTypes.ImBack, Value = "Yes, I want to see our current state." },
             };
 
             HeroCard heroCard = new HeroCard
