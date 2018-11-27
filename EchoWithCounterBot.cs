@@ -82,6 +82,7 @@ namespace Microsoft.BotBuilderSamples
                 var state = await _accessors.CounterState.GetAsync(turnContext, () => new CounterState());
 
                 bool exist = false;
+                bool notAdmin = true;
                 User currentUser = new User();
                 TimeSpan difference = DateTime.Now - state.Date;
                 /*IMongoCollection<Conversation> conversationCollection = null;
@@ -120,7 +121,11 @@ namespace Microsoft.BotBuilderSamples
                     state.Users.Add(currentUser);
                 }
 
-                if (turnContext.Activity.Text.ToLower() == "emoji")
+                if (turnContext.Activity.From.Id == "UECMZ1UKV:TEAAW1S5V")
+                {
+                    notAdmin = false;
+                }
+                else if (turnContext.Activity.Text.ToLower() == "emoji")
                 {
                     state.FeedbackType = turnContext.Activity.Text.ToLower();
                     response.Text = "Feedback Type changed to: Emoji";
@@ -248,15 +253,18 @@ namespace Microsoft.BotBuilderSamples
                     }
                 }
 
-                if (difference >= state.NeededDifference || state.SendImage)
+                if (notAdmin && (difference >= state.NeededDifference || state.SendImage))
                 {
                     await turnContext.SendActivityAsync(response);
                     if (!state.SendImage)
                     {
                         state.Date = DateTime.Now;
                     }
+
                     state.SendImage = false;
                 }
+
+                notAdmin = true;
 
                 // Set the property using the accessor.
                 await _accessors.CounterState.SetAsync(turnContext, state);
