@@ -183,7 +183,6 @@ namespace Microsoft.BotBuilderSamples
                     if (state.FeedbackType == "emoji")
                     {
                         response.Text = EmojiResponseGenerator(postToneResult);
-                        response.Text += turnContext.Activity.From.Id;
                     }
                     else if (state.FeedbackType == "graph")
                     {
