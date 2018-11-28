@@ -161,7 +161,7 @@ namespace Microsoft.BotBuilderSamples
 
                     state.SendImage = true;
                 }
-                else if (turnContext.Activity.Text.ToLower() == "Gib den usernamen aus!.!")
+                else if (turnContext.Activity.Text == "Gib den usernamen aus!.!")
                 {
                     response.Text += turnContext.Activity.From.Id;
                 }
@@ -395,7 +395,6 @@ namespace Microsoft.BotBuilderSamples
 
         public HeroCard EmpathyResponseGenerator(ToneAnalysis postReponse, CounterState state, User currentUser)
         {
-
             double joy = 0;
             double anger = 0;
             double sadness = 0;
@@ -427,8 +426,8 @@ namespace Microsoft.BotBuilderSamples
 
             if ((Math.Ceiling(joy) + Math.Ceiling(anger) + Math.Ceiling(fear) + Math.Ceiling(sadness)) != 0)
             {
-                x = 50 + (int)Math.Ceiling(49 * ((0.25 * joy) + (0.25 * anger) + (0.4 * fear) - (0.3 * sadness)) / numberOfTones);
-                y = 50 + (int)Math.Ceiling(49 * ((0.45 * joy) - (0.25 * anger) - (0.3 * fear) - (0.4 * sadness)) / numberOfTones);
+                x = 50 + (int)Math.Ceiling(49 * ((0.5 * joy) + (0.5 * anger) + (0.8 * fear) - (0.6 * sadness)) / numberOfTones);
+                y = 50 + (int)Math.Ceiling(49 * ((0.9 * joy) - (0.5 * anger) - (0.6 * fear) - (0.8 * sadness)) / numberOfTones);
             }
 
             if (currentUser.X == 0)
@@ -533,8 +532,8 @@ namespace Microsoft.BotBuilderSamples
 
             if ((Math.Ceiling(joy) + Math.Ceiling(anger) + Math.Ceiling(fear) + Math.Ceiling(sadness)) != 0)
             {
-                x = 50 + (int)Math.Ceiling(49 * ((0.25 * joy) + (0.25 * anger) + (0.4 * fear) - (0.3 * sadness)) / numberOfTones);
-                y = 50 + (int)Math.Ceiling(49 * ((0.45 * joy) - (0.25 * anger) - (0.3 * fear) - (0.4 * sadness)) / numberOfTones);
+                x = 50 + (int)Math.Ceiling(49 * ((0.5 * joy) + (0.5 * anger) + (0.8 * fear) - (0.6 * sadness)) / numberOfTones);
+                y = 50 + (int)Math.Ceiling(49 * ((0.9 * joy) - (0.5 * anger) - (0.6 * fear) - (0.8 * sadness)) / numberOfTones);
             }
 
             if (currentUser.X == 0)
