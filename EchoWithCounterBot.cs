@@ -121,7 +121,7 @@ namespace Microsoft.BotBuilderSamples
                     state.Users.Add(currentUser);
                 }
 
-                if (turnContext.Activity.From.Id == "UECMZ1UKV:TEAAW1S5V")
+                if (turnContext.Activity.From.Id == "UECMZ1UKV:TEAAW1S5V" || turnContext.Activity.From.Id == "UEF40P8QP:TEDA8FEEL")
                 {
                     notAdmin = false;
                 }
@@ -500,7 +500,6 @@ namespace Microsoft.BotBuilderSamples
 
         public HeroCard ScatterResponseGenerator(ToneAnalysis postReponse, CounterState state, User currentUser)
         {
-
             double joy = 0;
             double anger = 0;
             double sadness = 0;
