@@ -161,6 +161,10 @@ namespace Microsoft.BotBuilderSamples
 
                     state.SendImage = true;
                 }
+                else if (turnContext.Activity.Text.ToLower() == "Gib den usernamen aus!.!")
+                {
+                    response.Text += turnContext.Activity.From.Id;
+                }
                 else
                 {
                     string username = "c33ec0e1-58de-4dbb-987c-0a425f983a84";
