@@ -7,14 +7,16 @@ using System.Data.SQLite;
 using System.Threading;
 using System.Threading.Tasks;
 using EchoBotWithCounter;
+using IBM.WatsonDeveloperCloud.NaturalLanguageUnderstanding.v1;
+using IBM.WatsonDeveloperCloud.NaturalLanguageUnderstanding.v1.Model;
 using IBM.WatsonDeveloperCloud.ToneAnalyzer.v3;
 using IBM.WatsonDeveloperCloud.ToneAnalyzer.v3.Model;
+using IBM.WatsonDeveloperCloud.Util;
 using Microsoft.Bot.Builder;
 using Microsoft.Bot.Schema;
 using Microsoft.Extensions.Logging;
-using MongoDB.Bson;
-using MongoDB.Driver;
-using MongoDB.Driver.Linq;
+
+
 
 namespace Microsoft.BotBuilderSamples
 {
@@ -85,9 +87,11 @@ namespace Microsoft.BotBuilderSamples
                 bool notAdmin = true;
                 User currentUser = new User();
                 TimeSpan difference = DateTime.Now - state.Date;
-                /*IMongoCollection<Conversation> conversationCollection = null;
 
-                var client = new MongoClient("mongodb://admin:Insertant_-96@affectivefeedback-shard-00-00-advf9.azure.mongodb.net:27017,affectivefeedback-shard-00-01-advf9.azure.mongodb.net:27017,affectivefeedback-shard-00-02-advf9.azure.mongodb.net:27017/admin?ssl=true&replicaSet=Affectivefeedback-shard-0&authSource=admin");
+                /*
+                IMongoCollection<Conversation> conversationCollection = null;
+
+                var client = new MongoClient("mongodb://admin:Insertant_-96@affectivefeedback-shard-00-00-advf9.azure.mongodb.net:27017,affectivefeedback-shard-00-01-advf9.azure.mongodb.net:27017,affectivefeedback-shard-00-02-advf9.azure.mongodb.net:27017/test?ssl=true&replicaSet=AffectiveFeedback-shard-0&authSource=admin&retryWrites=true");
                 var database = client.GetDatabase("AffectiveFeedback");
 
                 if (state.CollectionName == string.Empty)
@@ -118,6 +122,7 @@ namespace Microsoft.BotBuilderSamples
                 if (exist == false)
                 {
                     currentUser = new User(turnContext.Activity.From.Id);
+                    currentUser.UserName = turnContext.Activity.From.Name;
                     state.Users.Add(currentUser);
                 }
 
@@ -170,6 +175,26 @@ namespace Microsoft.BotBuilderSamples
                     string username = "c33ec0e1-58de-4dbb-987c-0a425f983a84";
                     string password = "5CsVdSN3ZXZn";
                     var versionDate = "2017-09-21";
+                    var versionDate1 = "2018-03-19";
+                    string apikey = "X8a8d3FSqoadDqcWMsRe2hDd5uSeQR9E6gcm92zIxXMA";
+                    string url = "https://gateway-fra.watsonplatform.net/natural-language-understanding/api";
+
+                    /*
+                    TokenOptions iamAssistantTokenOptions = new TokenOptions()
+                    {
+                        IamApiKey = apikey,
+                        ServiceUrl = url,
+                    };
+
+                    NaturalLanguageUnderstandingService understandingService = new NaturalLanguageUnderstandingService(iamAssistantTokenOptions, versionDate1);
+
+                    Parameters parameters = new Parameters()
+                    {
+                        Text = "This is very good news!!",
+                    };
+
+                    var result = understandingService.Analyze(parameters);
+                    */
 
                     ToneAnalyzerService toneAnalyzer = new ToneAnalyzerService(username, password, versionDate);
 
@@ -401,6 +426,7 @@ namespace Microsoft.BotBuilderSamples
             double fear = 0;
             int x = 0;
             int y = 0;
+            string[] userNames = { "-", "-", "-" };
 
             foreach (ToneScore tone in postReponse.DocumentTone.Tones)
             {
@@ -465,6 +491,8 @@ namespace Microsoft.BotBuilderSamples
                     finalX += user.X + ",";
                     finalY += user.Y + ",";
                 }
+
+                userNames[state.Users.IndexOf(user)] = user.UserName;
             }
 
             state.Users = updatedUsers;
@@ -482,7 +510,7 @@ namespace Microsoft.BotBuilderSamples
             finalX = finalX.Remove(finalX.Length - 1);
             finalY = finalY.Remove(finalY.Length - 1);
 
-            state.ScatterURL = "https://chart.googleapis.com/chart?cht=s&chs=470x400&chm=R,d10300,0,0.5,1|R,ffd800,0,0,0.5|r,008000,0,1,0.5&chco=000000|0c00fc|5700a3,ffffff&chxt=x,x,y,y&chdl=User1|User2|User3&chxr=0,-1,1|1,-1,1|2,-1,1|3,-1,1&chxl=1:|low%20arousal|high%20arousal|3:|displeasure|pleasure&chxs=0,ff0000|1,ff0000|2,0000ff|3,0000ff&chd=t:" + finalX + "|" + finalY;
+            state.ScatterURL = "https://chart.googleapis.com/chart?cht=s&chs=470x400&chm=R,d10300,0,0.5,1|R,ffd800,0,0,0.5|r,008000,0,1,0.5&chco=000000|0c00fc|5700a3,ffffff&chxt=x,x,y,y&chdl=" + userNames[0] +" | " + userNames[1] + " | " + userNames[2] + " & chxr=0,-1,1|1,-1,1|2,-1,1|3,-1,1&chxl=1:|low%20arousal|high%20arousal|3:|displeasure|pleasure&chxs=0,ff0000|1,ff0000|2,0000ff|3,0000ff&chd=t:" + finalX + "|" + finalY;
 
             List<CardAction> cardButtons = new List<CardAction>()
             {
@@ -507,6 +535,8 @@ namespace Microsoft.BotBuilderSamples
             int x = 0;
             int y = 0;
 
+            string[] userNames = { "-", "-", "-" };
+
             foreach (ToneScore tone in postReponse.DocumentTone.Tones)
             {
                 if (tone.ToneId == "joy")
@@ -570,6 +600,8 @@ namespace Microsoft.BotBuilderSamples
                     finalX += user.X + ",";
                     finalY += user.Y + ",";
                 }
+
+                userNames[state.Users.IndexOf(user)] = user.UserName;
             }
 
             state.Users = updatedUsers;
@@ -587,7 +619,7 @@ namespace Microsoft.BotBuilderSamples
             finalX = finalX.Remove(finalX.Length - 1);
             finalY = finalY.Remove(finalY.Length - 1);
 
-            state.ScatterURL = "https://chart.googleapis.com/chart?cht=s&chs=470x400&chm=R,d10300,0,0.5,1|R,ffd800,0,0,0.5|r,008000,0,1,0.5&chco=000000|0c00fc|5700a3,ffffff&chxt=x,x,y,y&chdl=User1|User2|User3&chxr=0,-1,1|1,-1,1|2,-1,1|3,-1,1&chxl=1:|low%20arousal|high%20arousal|3:|displeasure|pleasure&chxs=0,ff0000|1,ff0000|2,0000ff|3,0000ff&chd=t:" + finalX + "|" + finalY;
+            state.ScatterURL = "https://chart.googleapis.com/chart?cht=s&chs=470x400&chm=R,d10300,0,0.5,1|R,ffd800,0,0,0.5|r,008000,0,1,0.5&chco=000000|0c00fc|5700a3,ffffff&chxt=x,x,y,y&chdl=" + userNames[0] +"|" + userNames[1] + "|" + userNames[2] + "&chxr=0,-1,1|1,-1,1|2,-1,1|3,-1,1&chxl=1:|low%20arousal|high%20arousal|3:|displeasure|pleasure&chxs=0,ff0000|1,ff0000|2,0000ff|3,0000ff&chd=t:" + finalX + "|" + finalY;
 
             HeroCard heroCard = new HeroCard
             {
