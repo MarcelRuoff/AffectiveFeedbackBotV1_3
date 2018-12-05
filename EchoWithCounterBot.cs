@@ -124,19 +124,19 @@ namespace Microsoft.BotBuilderSamples
                 {
                     state.FeedbackType = turnContext.Activity.Text.ToLower();
                     response.Text = "Feedback Type changed to: Graph";
-                    state.NeededDifference = TimeSpan.FromSeconds(30);
+                    state.NeededDifference = TimeSpan.FromSeconds(60);
                 }
                 else if (turnContext.Activity.Text.ToLower() == "empathy")
                 {
                     state.FeedbackType = turnContext.Activity.Text.ToLower();
                     response.Text = "Feedback Type changed to: Empathy";
-                    state.NeededDifference = TimeSpan.FromSeconds(30);
+                    state.NeededDifference = TimeSpan.FromSeconds(60);
                 }
                 else if (turnContext.Activity.Text.ToLower() == "scatter")
                 {
                     state.FeedbackType = turnContext.Activity.Text.ToLower();
                     response.Text = "Feedback Type changed to: Scatter";
-                    state.NeededDifference = TimeSpan.FromSeconds(30);
+                    state.NeededDifference = TimeSpan.FromSeconds(60);
                 }
                 else if (turnContext.Activity.Text == "Yes, I want to see our current state.")
                 {
@@ -169,6 +169,24 @@ namespace Microsoft.BotBuilderSamples
                     {
                         currentUser = new User(turnContext.Activity.From.Id);
                         currentUser.UserName = turnContext.Activity.From.Name;
+
+                        if (turnContext.Activity.From.Name == "jordyn77")
+                        {
+                            currentUser.UserName = "Marine";
+                        }
+                        else if (turnContext.Activity.From.Name == "zayo")
+                        {
+                            currentUser.UserName = "GroundPolice";
+                        }
+                        else if (turnContext.Activity.From.Name == "sihicracip")
+                        {
+                            currentUser.UserName = "Helicopter";
+                        }
+                        else
+                        {
+                            currentUser.UserName = turnContext.Activity.From.Name;
+                        }
+
                         state.Users.Add(currentUser);
                     }
 

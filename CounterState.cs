@@ -21,7 +21,7 @@ namespace Microsoft.BotBuilderSamples
         /// <value>The number of turns in the conversation.</value>
         public int TurnCount { get; set; } = 0;
 
-        public string FeedbackType { get; set; } = "emoji";
+        public string FeedbackType { get; set; } = "empathy";
 
         public string Joy { get; set; } = string.Empty;
 
@@ -43,7 +43,7 @@ namespace Microsoft.BotBuilderSamples
 
         public string CollectionName { get; set; } = string.Empty;
 
-        public TimeSpan NeededDifference { get; set; } = TimeSpan.FromMinutes(0);
+        public TimeSpan NeededDifference { get; set; } = TimeSpan.FromMinutes(1);
 
         public string ScatterURL { get; set; } = string.Empty;
 
