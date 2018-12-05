@@ -110,22 +110,6 @@ namespace Microsoft.BotBuilderSamples
                 }
                 */
 
-                foreach (User user in state.Users)
-                {
-                    if (user.UserId == turnContext.Activity.From.Id)
-                    {
-                        exist = true;
-                        currentUser = user;
-                    }
-                }
-
-                if (exist == false)
-                {
-                    currentUser = new User(turnContext.Activity.From.Id);
-                    currentUser.UserName = turnContext.Activity.From.Name;
-                    state.Users.Add(currentUser);
-                }
-
                 if (turnContext.Activity.From.Id == "UECMZ1UKV:TEAAW1S5V" || turnContext.Activity.From.Id == "UEF40P8QP:TEDA8FEEL")
                 {
                     notAdmin = false;
@@ -172,6 +156,22 @@ namespace Microsoft.BotBuilderSamples
                 }
                 else
                 {
+                    foreach (User user in state.Users)
+                    {
+                        if (user.UserId == turnContext.Activity.From.Id)
+                        {
+                            exist = true;
+                            currentUser = user;
+                        }
+                    }
+
+                    if (exist == false)
+                    {
+                        currentUser = new User(turnContext.Activity.From.Id);
+                        currentUser.UserName = turnContext.Activity.From.Name;
+                        state.Users.Add(currentUser);
+                    }
+
                     string username = "c33ec0e1-58de-4dbb-987c-0a425f983a84";
                     string password = "5CsVdSN3ZXZn";
                     var versionDate = "2017-09-21";
