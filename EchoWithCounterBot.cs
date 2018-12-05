@@ -142,7 +142,7 @@ namespace Microsoft.BotBuilderSamples
                 {
                     HeroCard heroCard = new HeroCard
                     {
-                        Title = state.ScatterURL,
+                        Title = "You're current State",
                         Images = new List<CardImage> { new CardImage(state.ScatterURL) },
                     };
 
