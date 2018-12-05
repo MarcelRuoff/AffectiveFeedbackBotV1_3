@@ -158,7 +158,7 @@ namespace Microsoft.BotBuilderSamples
                 {
                     HeroCard heroCard = new HeroCard
                     {
-                        Title = "Your current state ",
+                        Title = state.ScatterURL,
                         Images = new List<CardImage> { new CardImage(state.ScatterURL) },
                     };
 
@@ -427,7 +427,7 @@ namespace Microsoft.BotBuilderSamples
             int x = 0;
             int y = 0;
             string[] userNames = new string[state.Users.Count];
-            string userName = string.Empty;            
+            string userName = string.Empty;
 
             foreach (ToneScore tone in postReponse.DocumentTone.Tones)
             {
