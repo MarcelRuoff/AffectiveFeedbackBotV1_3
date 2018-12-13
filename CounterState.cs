@@ -48,5 +48,7 @@ namespace Microsoft.BotBuilderSamples
         public string ScatterURL { get; set; } = string.Empty;
 
         public bool SendImage { get; set; } = false;
+
+        public string GroupName { get; set; } = "Group1";
     }
 }

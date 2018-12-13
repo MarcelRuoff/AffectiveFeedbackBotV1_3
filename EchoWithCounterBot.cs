@@ -15,6 +15,8 @@ using IBM.WatsonDeveloperCloud.Util;
 using Microsoft.Bot.Builder;
 using Microsoft.Bot.Schema;
 using Microsoft.Extensions.Logging;
+using MySql.Data.MySqlClient;
+
 
 
 
@@ -88,54 +90,26 @@ namespace Microsoft.BotBuilderSamples
                 User currentUser = new User();
                 TimeSpan difference = DateTime.Now - state.Date;
 
-                /*
-                IMongoCollection<Conversation> conversationCollection = null;
+                MySqlConnection myConnection = new MySqlConnection("SERVER=129.13.29.119;" +
+                            "DATABASE=bachelorarbeit;" +
+                            "UID=issd;" +
+                            "PASSWORD=2MvnmQTaNhfDDHAF62Xv;");
 
-                var client = new MongoClient("mongodb://admin:Insertant_-96@affectivefeedback-shard-00-00-advf9.azure.mongodb.net:27017,affectivefeedback-shard-00-01-advf9.azure.mongodb.net:27017,affectivefeedback-shard-00-02-advf9.azure.mongodb.net:27017/test?ssl=true&replicaSet=AffectiveFeedback-shard-0&authSource=admin&retryWrites=true");
-                var database = client.GetDatabase("AffectiveFeedback");
-
-                if (state.CollectionName == string.Empty)
-                {
-                    string collectionName = "ChatHistory-" + DateTime.Now.ToLongTimeString() + ".sqlite";
-                    collectionName = collectionName.Replace(":", "-");
-
-                    state.CollectionName = collectionName;
-
-                    database.CreateCollection(state.CollectionName);
-                    conversationCollection = database.GetCollection<Conversation>(state.CollectionName);
-                }
-                else
-                {
-                    conversationCollection = database.GetCollection<Conversation>(state.CollectionName);
-                }
-                */
+                state.GroupName = turnContext.Activity.Text.Substring(16);
 
                 if (turnContext.Activity.From.Id == "UECMZ1UKV:TEAAW1S5V" || turnContext.Activity.From.Id == "UEF40P8QP:TEDA8FEEL")
                 {
                     notAdmin = false;
-                }
-                else if (turnContext.Activity.Text.ToLower() == "emoji")
-                {
-                    state.FeedbackType = turnContext.Activity.Text.ToLower();
-                    response.Text = "Feedback Type changed to: Emoji";
-                    state.NeededDifference = TimeSpan.FromMinutes(0);
-                }
-                else if (turnContext.Activity.Text.ToLower() == "graph")
-                {
-                    state.FeedbackType = turnContext.Activity.Text.ToLower();
-                    response.Text = "Feedback Type changed to: Graph";
-                    state.NeededDifference = TimeSpan.FromSeconds(60);
+
+                    if (turnContext.Activity.Text.StartsWith("mysql-database:"))
+                    {
+                        state.GroupName = turnContext.Activity.Text.Substring(16);
+                    }
                 }
                 else if (turnContext.Activity.Text.ToLower() == "empathy")
                 {
                     state.FeedbackType = turnContext.Activity.Text.ToLower();
                     response.Text = "Feedback Type changed to: Empathy";
-                    state.NeededDifference = TimeSpan.FromSeconds(60);
-                }
-                else if (turnContext.Activity.Text.ToLower() == "scatter")
-                {
-                    state.FeedbackType = turnContext.Activity.Text.ToLower();
-                    response.Text = "Feedback Type changed to: Scatter";
                     state.NeededDifference = TimeSpan.FromSeconds(60);
                 }
                 else if (turnContext.Activity.Text == "Yes, I want to see our current state.")
@@ -223,23 +197,17 @@ namespace Microsoft.BotBuilderSamples
 
                     var postToneResult = toneAnalyzer.Tone(toneInput, "application/json", null);
 
-                    Conversation conversation = new Conversation(turnContext.Activity.From.Id, turnContext.Activity.Text, postToneResult.ToString());
-                    // conversationCollection.InsertOne(conversation);
+                    MySqlCommand myCommand = new MySqlCommand("INSERT INTO " + state.GroupName + " (time, id, text, result) Values(?time, ?id, ?text, ?result)");
+                    myCommand.Parameters.AddWithValue("?time", DateTime.Now.ToString("yyyy-MM-dd H:mm:ss"));
+                    myCommand.Parameters.AddWithValue("?id", turnContext.Activity.From.Id);
+                    myCommand.Parameters.AddWithValue("?text", turnContext.Activity.Text);
+                    myCommand.Parameters.AddWithValue("?result", postToneResult.ResponseJson.ToString());
+                    myCommand.Connection = myConnection;
+                    myConnection.Open();
+                    myCommand.ExecuteNonQuery();
+                    myCommand.Connection.Close();
 
-                    // foreach (Tone tone in tones)
-                    if (state.FeedbackType == "emoji")
-                    {
-                        response.Text = EmojiResponseGenerator(postToneResult);
-                    }
-                    else if (state.FeedbackType == "graph")
-                    {
-                        response.Attachments = new List<Attachment>() { GraphResponseGenerator(postToneResult, state).ToAttachment() };
-                    }
-                    else if (state.FeedbackType == "scatter")
-                    {
-                        response.Attachments = new List<Attachment>() { ScatterResponseGenerator(postToneResult, state, currentUser).ToAttachment() };
-                    }
-                    else if (state.FeedbackType == "empathy")
+                    if (state.FeedbackType == "empathy")
                     {
                         HeroCard heroCard = EmpathyResponseGenerator(postToneResult, state, currentUser);
 
@@ -322,118 +290,6 @@ namespace Microsoft.BotBuilderSamples
             {
                 await turnContext.SendActivityAsync($"{turnContext.Activity.Type} event detected");
             }
-        }
-
-        public string EmojiResponseGenerator(ToneAnalysis postReponse)
-        {
-            string responseMessage = null;
-            double highestScore = 0;
-
-            foreach (ToneScore tone in postReponse.DocumentTone.Tones)
-            {
-                if (tone.ToneId == "joy" && highestScore <= tone.Score)
-                    {
-                        responseMessage = $"\U0001F917 \n";
-                        highestScore = (double)tone.Score;
-                    }
-                else if (tone.ToneId == "sadness" && highestScore <= tone.Score)
-                    {
-                        responseMessage = $"\U0001F614 \n";
-                        highestScore = (double)tone.Score;
-                }
-                else if (tone.ToneId == "fear" && highestScore <= tone.Score)
-                    {
-                        responseMessage = $"\U0001F61F \n";
-                        highestScore = (double)tone.Score;
-                }
-                else if (tone.ToneId == "anger" && highestScore <= tone.Score)
-                {
-                    responseMessage = $"\U0001F620 \n";
-                    highestScore = (double)tone.Score;
-                }
-            }
-
-            return responseMessage;
-        }
-
-        public HeroCard GraphResponseGenerator(ToneAnalysis postReponse, CounterState state)
-        {
-
-            state.TurnCount += 1;
-            string graphURL = "https://chart.googleapis.com/chart?cht=lc&chco=FF0000,000000,00FF00,0000FF&chdl=Anger|Fear|Joy|Sadness&chxr=0,0," + state.TurnCount + "|1,0.5,1&chs=250x150&chxt=x,y&chd=t4:";
-
-            int joy = 0;
-            int anger = 0;
-            int sadness = 0;
-            int fear = 0;
-
-            foreach (ToneScore tone in postReponse.DocumentTone.Tones)
-            {
-                int score = (int)(100 * (tone.Score - 0.5) * 2);
-
-                if (tone.ToneId == "joy")
-                {
-                    joy = score;
-                }
-                else if (tone.ToneId == "anger")
-                {
-                    anger = score;
-                }
-                else if (tone.ToneId == "sadness")
-                {
-                    sadness = score;
-                }
-                else if (tone.ToneId == "fear")
-                {
-                    fear = score;
-                }
-            }
-
-            if (state.Joy == string.Empty)
-                {
-                    state.Joy += joy;
-                }
-                else
-                {
-                    state.Joy += "," + joy;
-                }
-
-            if (state.Anger == string.Empty)
-                {
-                    state.Anger += anger;
-                }
-                else
-                {
-                    state.Anger += "," + anger;
-                }
-
-            if (state.Sadness == string.Empty)
-                {
-                    state.Sadness += sadness;
-                }
-                else
-                {
-                    state.Sadness += "," + sadness;
-                }
-
-            if (state.Fear == string.Empty)
-                {
-                    state.Fear += fear;
-                }
-                else
-                {
-                    state.Fear += "," + fear;
-                }
-
-            graphURL = graphURL + state.Anger + '|' + state.Fear + '|' + state.Joy + '|' + state.Sadness;
-
-            HeroCard heroCard = new HeroCard
-            {
-                Text = "Your current State: ",
-                Images = new List<CardImage> { new CardImage(graphURL) },
-            };
-
-            return heroCard;
         }
 
         public HeroCard EmpathyResponseGenerator(ToneAnalysis postReponse, CounterState state, User currentUser)
@@ -541,110 +397,6 @@ namespace Microsoft.BotBuilderSamples
             {
                 Text = "Do you want to see your current State? ",
                 Buttons = cardButtons,
-            };
-
-            return heroCard;
-        }
-
-        public HeroCard ScatterResponseGenerator(ToneAnalysis postReponse, CounterState state, User currentUser)
-        {
-            double joy = 0;
-            double anger = 0;
-            double sadness = 0;
-            double fear = 0;
-            int x = 0;
-            int y = 0;
-
-            string[] userNames = { "-", "-", "-" };
-
-            foreach (ToneScore tone in postReponse.DocumentTone.Tones)
-            {
-                if (tone.ToneId == "joy")
-                {
-                    joy = (double)tone.Score;
-                }
-                else if (tone.ToneId == "anger")
-                {
-                    anger = (double)tone.Score;
-                }
-                else if (tone.ToneId == "sadness")
-                {
-                    sadness = (double)tone.Score;
-                }
-                else if (tone.ToneId == "fear")
-                {
-                    fear = (double)tone.Score;
-                }
-            }
-
-            int numberOfTones = (int)(Math.Ceiling(joy) + Math.Ceiling(anger) + Math.Ceiling(fear) + Math.Ceiling(sadness));
-
-            if ((Math.Ceiling(joy) + Math.Ceiling(anger) + Math.Ceiling(fear) + Math.Ceiling(sadness)) != 0)
-            {
-                x = 50 + (int)Math.Ceiling(49 * ((0.5 * joy) + (0.5 * anger) + (0.8 * fear) - (0.6 * sadness)) / numberOfTones);
-                y = 50 + (int)Math.Ceiling(49 * ((0.9 * joy) - (0.5 * anger) - (0.6 * fear) - (0.8 * sadness)) / numberOfTones);
-            }
-
-            if (currentUser.X == 0)
-            {
-                currentUser.X += x;
-            }
-            else
-            {
-                currentUser.X = (int)((0.4 * x) + (0.6 * currentUser.X));
-            }
-
-            if (currentUser.Y == 0)
-            {
-                currentUser.Y += y;
-            }
-            else
-            {
-                currentUser.Y = (int)((0.4 * y) + (0.6 * currentUser.Y));
-            }
-
-            List<User> updatedUsers = new List<User>();
-            string finalX = string.Empty;
-            string finalY = string.Empty;
-            foreach (User user in state.Users)
-            {
-                if (user.UserId == currentUser.UserId)
-                {
-                    updatedUsers.Add(currentUser);
-                    finalX += currentUser.X + ",";
-                    finalY += currentUser.Y + ",";
-                }
-                else
-                {
-                    updatedUsers.Add(user);
-                    finalX += user.X + ",";
-                    finalY += user.Y + ",";
-                }
-
-                userNames[state.Users.IndexOf(user)] = user.UserName;
-            }
-
-            state.Users = updatedUsers;
-            /**
-            List<int> updatedRadius = new List<int>();
-            state.Radius.ForEach(radius => updatedRadius.Add(radius - 10));
-            updatedRadius.Add(100);
-            state.Radius = updatedRadius;
-
-            string radiusString = string.Empty;
-            state.Radius.ForEach(radius => radiusString += radius + ",");
-
-            radiusString = radiusString.Remove(radiusString.Length - 1);
-    */
-            finalX = finalX.Remove(finalX.Length - 1);
-            finalY = finalY.Remove(finalY.Length - 1);
-
-            state.ScatterURL = "https://chart.googleapis.com/chart?cht=s&chs=470x400&chm=R,d10300,0,0.5,1|R,ffd800,0,0,0.5|r,008000,0,1,0.5&chco=000000|0c00fc|5700a3,ffffff&chxt=x,x,y,y&chdl=" + userNames[0] +"|" + userNames[1] + "|" + userNames[2] + "&chxr=0,-1,1|1,-1,1|2,-1,1|3,-1,1&chxl=1:|low%20arousal|high%20arousal|3:|displeasure|pleasure&chxs=0,ff0000|1,ff0000|2,0000ff|3,0000ff&chd=t:" + finalX + "|" + finalY;
-
-            HeroCard heroCard = new HeroCard
-            {
-                Text = "Your current State: ",
-                Images = new List<CardImage> { new CardImage(state.ScatterURL) },
             };
 
             return heroCard;

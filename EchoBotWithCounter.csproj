@@ -23,6 +23,7 @@
     <PackageReference Include="Microsoft.Extensions.Logging.AzureAppServices" Version="2.1.1" />
     <PackageReference Include="Microsoft.WindowsAzure.ConfigurationManager" Version="3.2.3" />
     <PackageReference Include="MongoDB.Driver" Version="2.7.2" />
+    <PackageReference Include="MySql.Data" Version="8.0.13" />
     <PackageReference Include="StyleCop.Analyzers" Version="1.1.0-beta008" PrivateAssets="all" />
     <PackageReference Include="System.Data.SQLite" Version="1.0.109.2" />
   </ItemGroup>
