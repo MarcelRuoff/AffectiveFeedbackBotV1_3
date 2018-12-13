@@ -16,6 +16,7 @@ using Microsoft.Bot.Builder;
 using Microsoft.Bot.Schema;
 using Microsoft.Extensions.Logging;
 using MySql.Data.MySqlClient;
+using System.Data.SqlClient;
 
 
 
@@ -90,10 +91,7 @@ namespace Microsoft.BotBuilderSamples
                 User currentUser = new User();
                 TimeSpan difference = DateTime.Now - state.Date;
 
-                MySqlConnection myConnection = new MySqlConnection("SERVER=129.13.29.119;" +
-                            "DATABASE=bachelorarbeit;" +
-                            "UID=issd;" +
-                            "PASSWORD=2MvnmQTaNhfDDHAF62Xv;");
+                SqlConnection myConnection = new SqlConnection("Server=tcp:thesis-affective.database.windows.net,1433;Initial Catalog=Bachelorarbeit;Persist Security Info=False;User ID=issd-affective;Password=zWBR5IRI3u7zUzjMqADZ;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;");
 
                 if (turnContext.Activity.From.Id == "UECMZ1UKV:TEAAW1S5V" || turnContext.Activity.From.Id == "UEF40P8QP:TEDA8FEEL")
                 {
@@ -195,7 +193,7 @@ namespace Microsoft.BotBuilderSamples
 
                     var postToneResult = toneAnalyzer.Tone(toneInput, "application/json", null);
 
-                    MySqlCommand myCommand = new MySqlCommand("INSERT INTO " + state.GroupName + " (time, id, text, result) Values(?time, ?id, ?text, ?result)");
+                    SqlCommand myCommand = new SqlCommand("INSERT INTO " + state.GroupName + " (time, id, text, result) Values(?time, ?id, ?text, ?result)");
                     myCommand.Parameters.AddWithValue("?time", DateTime.Now.ToString("yyyy-MM-dd H:mm:ss"));
                     myCommand.Parameters.AddWithValue("?id", turnContext.Activity.From.Id);
                     myCommand.Parameters.AddWithValue("?text", turnContext.Activity.Text);
