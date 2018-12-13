@@ -193,15 +193,17 @@ namespace Microsoft.BotBuilderSamples
 
                     var postToneResult = toneAnalyzer.Tone(toneInput, "application/json", null);
 
-                    SqlCommand myCommand = new SqlCommand("INSERT INTO " + state.GroupName + " (time, id, text, result) Values(?time, ?id, ?text, ?result)");
-                    myCommand.Parameters.AddWithValue("?time", DateTime.Now.ToString("yyyy-MM-dd H:mm:ss"));
-                    myCommand.Parameters.AddWithValue("?id", turnContext.Activity.From.Id);
-                    myCommand.Parameters.AddWithValue("?text", turnContext.Activity.Text);
-                    myCommand.Parameters.AddWithValue("?result", postToneResult.ResponseJson.ToString());
-                    myCommand.Connection = myConnection;
+                    string queryString = "INSERT INTO " + state.GroupName + " (time, id, text, result) Values(@time, @id, @text, @result)";
+
+                    SqlCommand command = new SqlCommand(queryString, myConnection);
+                    command.Parameters.AddWithValue("@time", DateTime.Now.ToString("yyyy-MM-dd H:mm:ss"));
+                    command.Parameters.AddWithValue("@id", turnContext.Activity.From.Id);
+                    command.Parameters.AddWithValue("@text", turnContext.Activity.Text);
+                    command.Parameters.AddWithValue("@result", postToneResult.ResponseJson.ToString());
+                    command.Connection = myConnection;
                     myConnection.Open();
-                    myCommand.ExecuteNonQuery();
-                    myCommand.Connection.Close();
+                    command.ExecuteNonQuery();
+                    command.Connection.Close();
 
                     if (state.FeedbackType == "empathy")
                     {
