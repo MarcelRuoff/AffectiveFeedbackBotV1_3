@@ -3,7 +3,7 @@
 
 using System;
 using System.Collections.Generic;
-using System.Data.SQLite;
+using System.Data.SqlClient;
 using System.Threading;
 using System.Threading.Tasks;
 using EchoBotWithCounter;
@@ -15,11 +15,6 @@ using IBM.WatsonDeveloperCloud.Util;
 using Microsoft.Bot.Builder;
 using Microsoft.Bot.Schema;
 using Microsoft.Extensions.Logging;
-using MySql.Data.MySqlClient;
-using System.Data.SqlClient;
-
-
-
 
 namespace Microsoft.BotBuilderSamples
 {
@@ -38,10 +33,6 @@ namespace Microsoft.BotBuilderSamples
     {
         private readonly EchoBotAccessors _accessors;
         private readonly ILogger _logger;
-        private ToneChatInput toneChatInput = new ToneChatInput()
-        {
-            Utterances = new List<Utterance>(),
-        };
 
         /// <summary>
         /// Initializes a new instance of the <see cref="EchoWithCounterBot"/> class.
@@ -137,8 +128,10 @@ namespace Microsoft.BotBuilderSamples
 
                     if (exist == false)
                     {
-                        currentUser = new User(turnContext.Activity.From.Id);
-                        currentUser.UserName = turnContext.Activity.From.Name;
+                        currentUser = new User(turnContext.Activity.From.Id)
+                        {
+                            UserName = turnContext.Activity.From.Name,
+                        };
 
                         if (turnContext.Activity.From.Name == "jordyn77")
                         {
@@ -164,34 +157,30 @@ namespace Microsoft.BotBuilderSamples
                     string password = "5CsVdSN3ZXZn";
                     var versionDate = "2017-09-21";
                     var versionDate1 = "2018-03-19";
-                    string apikey = "X8a8d3FSqoadDqcWMsRe2hDd5uSeQR9E6gcm92zIxXMA";
-                    string url = "https://gateway-fra.watsonplatform.net/natural-language-understanding/api";
 
-                    /*
                     TokenOptions iamAssistantTokenOptions = new TokenOptions()
                     {
-                        IamApiKey = apikey,
-                        ServiceUrl = url,
+                        IamApiKey = "Do7LE3vasQbi5I81tj9fWnnsEGvE00_yhYA6yCugj3bz",
+                        ServiceUrl = "https://gateway-fra.watsonplatform.net/natural-language-understanding/api",
                     };
 
                     NaturalLanguageUnderstandingService understandingService = new NaturalLanguageUnderstandingService(iamAssistantTokenOptions, versionDate1);
 
                     Parameters parameters = new Parameters()
                     {
-                        Text = "This is very good news!!",
+                        Text = turnContext.Activity.Text,
+                        Features = new Features()
+                        {
+
+                            Emotion = new EmotionOptions()
+                            {
+                                Document = true,
+                            },
+                        },
+                        Language = "en",
                     };
 
                     var result = understandingService.Analyze(parameters);
-                    */
-
-                    ToneAnalyzerService toneAnalyzer = new ToneAnalyzerService(username, password, versionDate);
-
-                    ToneInput toneInput = new ToneInput()
-                    {
-                        Text = turnContext.Activity.Text,
-                    };
-
-                    var postToneResult = toneAnalyzer.Tone(toneInput, "application/json", null);
 
                     string queryString = "INSERT INTO " + state.GroupName + " (time, id, text, result) Values(@time, @id, @text, @result)";
 
@@ -199,70 +188,67 @@ namespace Microsoft.BotBuilderSamples
                     command.Parameters.AddWithValue("@time", DateTime.Now.ToString("yyyy-MM-dd H:mm:ss"));
                     command.Parameters.AddWithValue("@id", turnContext.Activity.From.Id);
                     command.Parameters.AddWithValue("@text", turnContext.Activity.Text);
-                    command.Parameters.AddWithValue("@result", postToneResult.ResponseJson.ToString());
+                    command.Parameters.AddWithValue("@result", result.ResponseJson.ToString());
                     command.Connection = myConnection;
                     myConnection.Open();
                     command.ExecuteNonQuery();
                     command.Connection.Close();
 
-                    if (state.FeedbackType == "empathy")
+                    HeroCard heroCard = EmpathyResponseGenerator(result, state, currentUser);
+
+                    string responseText = string.Empty;
+                    foreach (User user1 in state.Users)
                     {
-                        HeroCard heroCard = EmpathyResponseGenerator(postToneResult, state, currentUser);
-
-                        string responseText = string.Empty;
-                        foreach (User user1 in state.Users)
+                        foreach (User user2 in state.Users)
                         {
-                            foreach (User user2 in state.Users)
+                            double distance = Math.Abs(Math.Sqrt(Math.Pow(user1.X - user2.X, 2) + Math.Pow(user1.Y - user2.Y, 2)));
+                            if (distance > 50 && responseText == string.Empty)
                             {
-                                double distance = Math.Abs(Math.Sqrt(Math.Pow(user1.X - user2.X, 2) + Math.Pow(user1.Y - user2.Y, 2)));
-                                if (distance > 50 && responseText == string.Empty)
-                                {
-                                    responseText = "Your team mood is dispersed.";
-                                }
-                            }
-
-                            if (user1.X >= 40 && user1.X < 60 && user1.Y < 40 && responseText == string.Empty)
-                            {
-                                responseText = "You're working hard. Keep on trying.  \n \U0001F917";
+                                responseText = "Your team mood is dispersed.";
                             }
                         }
 
-                        foreach (User user1 in state.Users)
+                        if (user1.X >= 40 && user1.X < 60 && user1.Y < 40 && responseText == string.Empty)
                         {
-                            if (user1.X < 40 && user1.Y < 40 && responseText == string.Empty)
-                            {
-                                responseText = "Don't let yourself down. You can do this. \n \U0001F917";
-                            }
+                            responseText = "You're working hard. Keep on trying.  \n \U0001F917";
                         }
-
-                        foreach (User user1 in state.Users)
-                        {
-                            if (user1.X >= 60 && user1.Y < 40 && responseText == string.Empty)
-                            {
-                                responseText = "Don't worry. You can do this. \n \U0001F917";
-                            }
-                        }
-
-                        foreach (User user1 in state.Users)
-                        {
-                            if (user1.X >= 40 && user1.X < 70 && user1.Y >= 40 && user1.Y < 50 && responseText == string.Empty)
-                            {
-                                responseText = "You're working hard. Keep on trying.  \n \U0001F917";
-                            }
-                        }
-
-                        foreach (User user1 in state.Users)
-                        {
-                            if (user1.X >= 70 && user1.Y >= 40 && user1.Y < 50 && responseText == string.Empty)
-                            {
-                                responseText = "You're doing great. \n \U0001F917";
-                            }
-                        }
-
-                        heroCard.Title = responseText;
-
-                        response.Attachments = new List<Attachment>() { heroCard.ToAttachment() };
                     }
+
+                    foreach (User user1 in state.Users)
+                    {
+                        if (user1.X < 40 && user1.Y < 40 && responseText == string.Empty)
+                        {
+                            responseText = "Don't let yourself down. You can do this. \n \U0001F917";
+                        }
+                    }
+
+                    foreach (User user1 in state.Users)
+                    {
+                        if (user1.X >= 60 && user1.Y < 40 && responseText == string.Empty)
+                        {
+                            responseText = "Don't worry. You can do this. \n \U0001F917";
+                        }
+                    }
+
+                    foreach (User user1 in state.Users)
+                    {
+                        if (user1.X >= 40 && user1.X < 70 && user1.Y >= 40 && user1.Y < 50 && responseText == string.Empty)
+                        {
+                            responseText = "You're working hard. Keep on trying.  \n \U0001F917";
+                        }
+                    }
+
+                    foreach (User user1 in state.Users)
+                    {
+                        if (user1.X >= 70 && user1.Y >= 40 && user1.Y < 50 && responseText == string.Empty)
+                        {
+                            responseText = "You're doing great. \n \U0001F917";
+                        }
+                    }
+
+                    heroCard.Title = responseText;
+
+                    response.Attachments = new List<Attachment>() { heroCard.ToAttachment() };
                 }
 
                 if (notAdmin && (difference >= state.NeededDifference || state.SendImage))
@@ -290,62 +276,32 @@ namespace Microsoft.BotBuilderSamples
             }
         }
 
-        public HeroCard EmpathyResponseGenerator(ToneAnalysis postReponse, CounterState state, User currentUser)
+        public HeroCard EmpathyResponseGenerator(AnalysisResults postReponse, CounterState state, User currentUser)
         {
             double joy = 0;
             double anger = 0;
             double sadness = 0;
             double fear = 0;
-            int x = 0;
-            int y = 0;
+            int x = 50;
+            int y = 50;
             string[] userNames = new string[state.Users.Count];
             string userName = string.Empty;
 
-            foreach (ToneScore tone in postReponse.DocumentTone.Tones)
-            {
-                if (tone.ToneId == "joy")
-                {
-                    joy = (double)tone.Score;
-                }
-                else if (tone.ToneId == "anger")
-                {
-                    anger = (double)tone.Score;
-                }
-                else if (tone.ToneId == "sadness")
-                {
-                    sadness = (double)tone.Score;
-                }
-                else if (tone.ToneId == "fear")
-                {
-                    fear = (double)tone.Score;
-                }
-            }
+            joy = postReponse.Emotion.Document.Emotion.Joy.Value;
+            anger = postReponse.Emotion.Document.Emotion.Anger.Value;
+            sadness = postReponse.Emotion.Document.Emotion.Sadness.Value;
+            fear = postReponse.Emotion.Document.Emotion.Fear.Value;
 
             int numberOfTones = (int)(Math.Ceiling(joy) + Math.Ceiling(anger) + Math.Ceiling(fear) + Math.Ceiling(sadness));
 
             if ((Math.Ceiling(joy) + Math.Ceiling(anger) + Math.Ceiling(fear) + Math.Ceiling(sadness)) != 0)
             {
-                x = 50 + (int)Math.Ceiling(49 * ((0.5 * joy) + (0.5 * anger) + (0.8 * fear) - (0.6 * sadness)) / numberOfTones);
-                y = 50 + (int)Math.Ceiling(49 * ((0.9 * joy) - (0.5 * anger) - (0.6 * fear) - (0.8 * sadness)) / numberOfTones);
+                x += (int)Math.Ceiling(49 * ((0.5 * joy) + (0.5 * anger) + (0.8 * fear) - (0.6 * sadness)) / numberOfTones);
+                y += (int)Math.Ceiling(49 * ((0.9 * joy) - (0.5 * anger) - (0.6 * fear) - (0.8 * sadness)) / numberOfTones);
             }
 
-            if (currentUser.X == 0)
-            {
-                currentUser.X += x;
-            }
-            else
-            {
-                currentUser.X = (int)((0.4 * x) + (0.6 * currentUser.X));
-            }
-
-            if (currentUser.Y == 0)
-            {
-                currentUser.Y += y;
-            }
-            else
-            {
-                currentUser.Y = (int)((0.4 * y) + (0.6 * currentUser.Y));
-            }
+            currentUser.X = (int)((0.4 * x) + (0.6 * currentUser.X));
+            currentUser.Y = (int)((0.4 * y) + (0.6 * currentUser.Y));
 
             List<User> updatedUsers = new List<User>();
             string finalX = string.Empty;
