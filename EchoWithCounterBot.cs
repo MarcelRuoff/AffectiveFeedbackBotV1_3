@@ -95,8 +95,6 @@ namespace Microsoft.BotBuilderSamples
                             "UID=issd;" +
                             "PASSWORD=2MvnmQTaNhfDDHAF62Xv;");
 
-                state.GroupName = turnContext.Activity.Text.Substring(16);
-
                 if (turnContext.Activity.From.Id == "UECMZ1UKV:TEAAW1S5V" || turnContext.Activity.From.Id == "UEF40P8QP:TEDA8FEEL")
                 {
                     notAdmin = false;
