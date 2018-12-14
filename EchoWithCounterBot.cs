@@ -97,7 +97,7 @@ namespace Microsoft.BotBuilderSamples
                 {
                     state.FeedbackType = turnContext.Activity.Text.ToLower();
                     response.Text = "Feedback Type changed to: Empathy";
-                    state.NeededDifference = TimeSpan.FromSeconds(60);
+                    state.NeededDifference = TimeSpan.FromSeconds(225);
                 }
                 else if (turnContext.Activity.Text == "Yes, I want to see our current state.")
                 {
@@ -133,7 +133,7 @@ namespace Microsoft.BotBuilderSamples
                             UserName = turnContext.Activity.From.Name,
                         };
 
-                        if (turnContext.Activity.From.Name == "jordyn77")
+                        if (turnContext.Activity.From.Name == "jourdyn77")
                         {
                             currentUser.UserName = "Marine";
                         }
@@ -210,7 +210,7 @@ namespace Microsoft.BotBuilderSamples
 
                         if (user1.X >= 40 && user1.X < 60 && user1.Y < 40 && responseText == string.Empty)
                         {
-                            responseText = "You're working hard. Keep on trying.  \n \U0001F917";
+                            responseText = "You're working hard. Keep on trying.  \n \U0001F917"; // angry
                         }
                     }
 
@@ -218,7 +218,7 @@ namespace Microsoft.BotBuilderSamples
                     {
                         if (user1.X < 40 && user1.Y < 40 && responseText == string.Empty)
                         {
-                            responseText = "Don't let yourself down. You can do this. \n \U0001F917";
+                            responseText = "Don't let yourself down. You can do this. \n \U0001F917"; // sad
                         }
                     }
 
@@ -226,7 +226,7 @@ namespace Microsoft.BotBuilderSamples
                     {
                         if (user1.X >= 60 && user1.Y < 40 && responseText == string.Empty)
                         {
-                            responseText = "Don't worry. You can do this. \n \U0001F917";
+                            responseText = "Don't worry. You can do this. \n \U0001F917"; // afraid
                         }
                     }
 
@@ -234,7 +234,7 @@ namespace Microsoft.BotBuilderSamples
                     {
                         if (user1.X >= 40 && user1.X < 70 && user1.Y >= 40 && user1.Y < 50 && responseText == string.Empty)
                         {
-                            responseText = "You're working hard. Keep on trying.  \n \U0001F917";
+                            responseText = "You're working hard. Keep on trying.  \n \U0001F917"; // slightly angry
                         }
                     }
 
@@ -242,7 +242,7 @@ namespace Microsoft.BotBuilderSamples
                     {
                         if (user1.X >= 70 && user1.Y >= 40 && user1.Y < 50 && responseText == string.Empty)
                         {
-                            responseText = "You're doing great. \n \U0001F917";
+                            responseText = "You're doing great. \n \U0001F917"; // aroused
                         }
                     }
 

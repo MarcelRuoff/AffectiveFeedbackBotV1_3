@@ -43,7 +43,7 @@ namespace Microsoft.BotBuilderSamples
 
         public string CollectionName { get; set; } = string.Empty;
 
-        public TimeSpan NeededDifference { get; set; } = TimeSpan.FromMinutes(1);
+        public TimeSpan NeededDifference { get; set; } = TimeSpan.FromSeconds(225);
 
         public string ScatterURL { get; set; } = string.Empty;
 
