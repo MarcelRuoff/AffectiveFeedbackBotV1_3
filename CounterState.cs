@@ -4,7 +4,6 @@
 using System;
 using System.Collections.Generic;
 using EchoBotWithCounter;
-using MongoDB.Driver;
 
 namespace Microsoft.BotBuilderSamples
 {
@@ -22,14 +21,6 @@ namespace Microsoft.BotBuilderSamples
         public int TurnCount { get; set; } = 0;
 
         public string FeedbackType { get; set; } = "empathy";
-
-        public string Joy { get; set; } = string.Empty;
-
-        public string Anger { get; set; } = string.Empty;
-
-        public string Sadness { get; set; } = string.Empty;
-
-        public string Fear { get; set; } = string.Empty;
 
         public string X { get; set; } = string.Empty;
 

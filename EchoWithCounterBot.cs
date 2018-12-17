@@ -93,12 +93,6 @@ namespace Microsoft.BotBuilderSamples
                         state.GroupName = turnContext.Activity.Text.Substring(16);
                     }
                 }
-                else if (turnContext.Activity.Text.ToLower() == "empathy")
-                {
-                    state.FeedbackType = turnContext.Activity.Text.ToLower();
-                    response.Text = "Feedback Type changed to: Empathy";
-                    state.NeededDifference = TimeSpan.FromSeconds(225);
-                }
                 else if (turnContext.Activity.Text == "Yes, I want to see our current state.")
                 {
                     HeroCard heroCard = new HeroCard
@@ -153,9 +147,6 @@ namespace Microsoft.BotBuilderSamples
                         state.Users.Add(currentUser);
                     }
 
-                    string username = "c33ec0e1-58de-4dbb-987c-0a425f983a84";
-                    string password = "5CsVdSN3ZXZn";
-                    var versionDate = "2017-09-21";
                     var versionDate1 = "2018-03-19";
 
                     TokenOptions iamAssistantTokenOptions = new TokenOptions()
@@ -202,39 +193,92 @@ namespace Microsoft.BotBuilderSamples
                         foreach (User user2 in state.Users)
                         {
                             double distance = Math.Abs(Math.Sqrt(Math.Pow(user1.X - user2.X, 2) + Math.Pow(user1.Y - user2.Y, 2)));
-                            if (distance > 50 && responseText == string.Empty)
+                            if (distance > 100 && responseText == string.Empty)
                             {
+
                                 responseText = "Your team mood is dispersed.";
                             }
                         }
 
-                        if (user1.X >= 40 && user1.X < 60 && user1.Y < 40 && responseText == string.Empty)
+                        if (user1.X >= 50 && user1.X < 75 && user1.Y < 30 && responseText == string.Empty)
                         {
-                            responseText = "You're working hard. Keep on trying.  \n \U0001F917"; // angry
+                            Random random = new Random();
+                            int caseSwitch = random.Next(1, 4);
+                            switch (caseSwitch)
+                            {
+                                case 1:
+                                    responseText = "You may feel currently upset, but you can do this"; // angry
+                                    break;
+                                case 2:
+                                    responseText = "It sounds like some felt fairly frustrated choosing the fields."; // angry
+                                    break;
+                                case 3:
+                                    responseText = "You're working hard. Keep on trying.  \n \U0001F917"; // angry
+                                    break;
+                                case 4:
+                                    responseText = "Keep moving forward and you will succeed"; // angry
+                                    break;
+                            }
                         }
                     }
 
                     foreach (User user1 in state.Users)
                     {
-                        if (user1.X < 40 && user1.Y < 40 && responseText == string.Empty)
+                        if (user1.X < 25 && user1.Y < 40 && responseText == string.Empty)
                         {
-                            responseText = "Don't let yourself down. You can do this. \n \U0001F917"; // sad
+                            Random random = new Random();
+                            int caseSwitch = random.Next(1, 2);
+                            switch (caseSwitch)
+                            {
+                                case 1:
+                                    responseText = "Don't let yourself down. You can do this. \n \U0001F917"; // sad
+                                    break;
+                                case 2:
+                                    responseText = "Believe in yourself. \n \U0001F917"; // sad
+                                    break;
+                            }
                         }
                     }
 
                     foreach (User user1 in state.Users)
                     {
-                        if (user1.X >= 60 && user1.Y < 40 && responseText == string.Empty)
+                        if (user1.X >= 75 && user1.Y < 35 && responseText == string.Empty)
                         {
-                            responseText = "Don't worry. You can do this. \n \U0001F917"; // afraid
+                            Random random = new Random();
+                            int caseSwitch = random.Next(1, 4);
+                            switch (caseSwitch)
+                            {
+                                case 1:
+                                    responseText = "Don't worry. You can do this. \n \U0001F917"; // afraid
+                                    break;
+                                case 2:
+                                    responseText = "Just keep discussing - you will get the hang of it"; // afraid
+                                    break;
+                                case 3:
+                                    responseText = "Don't let your fears to stand in your way."; // afraid
+                                    break;
+                                case 4:
+                                    responseText = "Believe in yourself. \n \U0001F917"; // afraid
+                                    break;
+                            }
                         }
                     }
 
                     foreach (User user1 in state.Users)
                     {
-                        if (user1.X >= 40 && user1.X < 70 && user1.Y >= 40 && user1.Y < 50 && responseText == string.Empty)
+                        if (user1.X >= 25 && user1.X < 50 && user1.Y < 30 && responseText == string.Empty)
                         {
-                            responseText = "You're working hard. Keep on trying.  \n \U0001F917"; // slightly angry
+                            Random random = new Random();
+                            int caseSwitch = random.Next(1, 2);
+                            switch (caseSwitch)
+                            {
+                                case 1:
+                                    responseText = "You're working hard. Keep on trying.  \n \U0001F917"; // disgusted
+                                    break;
+                                case 2:
+                                    responseText = "Just keep discussing - you will get the hang of it"; // disgusted
+                                    break;
+                            }
                         }
                     }
 
@@ -278,30 +322,29 @@ namespace Microsoft.BotBuilderSamples
 
         public HeroCard EmpathyResponseGenerator(AnalysisResults postReponse, CounterState state, User currentUser)
         {
-            double joy = 0;
-            double anger = 0;
-            double sadness = 0;
-            double fear = 0;
-            int x = 50;
-            int y = 50;
             string[] userNames = new string[state.Users.Count];
             string userName = string.Empty;
 
-            joy = postReponse.Emotion.Document.Emotion.Joy.Value;
-            anger = postReponse.Emotion.Document.Emotion.Anger.Value;
-            sadness = postReponse.Emotion.Document.Emotion.Sadness.Value;
-            fear = postReponse.Emotion.Document.Emotion.Fear.Value;
+            currentUser.Joy = (0.6 * currentUser.Joy) + (0.4 * postReponse.Emotion.Document.Emotion.Joy.Value);
+            currentUser.Anger = (0.6 * currentUser.Anger) + (0.4 * postReponse.Emotion.Document.Emotion.Anger.Value);
+            currentUser.Sadness = (0.6 * currentUser.Sadness) + (0.4 * postReponse.Emotion.Document.Emotion.Sadness.Value);
+            currentUser.Fear = (0.6 * currentUser.Fear) + (0.4 * postReponse.Emotion.Document.Emotion.Fear.Value);
+            currentUser.Disgust = (0.6 * currentUser.Disgust) + (0.4 * postReponse.Emotion.Document.Emotion.Disgust.Value);
 
-            int numberOfTones = (int)(Math.Ceiling(joy) + Math.Ceiling(anger) + Math.Ceiling(fear) + Math.Ceiling(sadness));
+            // int numberOfTones = (int)(Math.Ceiling(currentUser.Joy) + Math.Ceiling(currentUser.Anger) + Math.Ceiling(currentUser.Fear) + Math.Ceiling(currentUser.Sadness) + Math.Ceiling(currentUser.Disgust));
+            double numberOfTones = Math.Max(currentUser.Joy + currentUser.Anger + currentUser.Fear + currentUser.Sadness + currentUser.Disgust, 1);
 
-            if ((Math.Ceiling(joy) + Math.Ceiling(anger) + Math.Ceiling(fear) + Math.Ceiling(sadness)) != 0)
+            if (numberOfTones != 0)
             {
-                x += (int)Math.Ceiling(49 * ((0.5 * joy) + (0.5 * anger) + (0.8 * fear) - (0.6 * sadness)) / numberOfTones);
-                y += (int)Math.Ceiling(49 * ((0.9 * joy) - (0.5 * anger) - (0.6 * fear) - (0.8 * sadness)) / numberOfTones);
-            }
+                currentUser.X = 50 + (int)Math.Ceiling(50 * ((0.5 * currentUser.Joy) + (0.3 * currentUser.Anger) + (0.7 * currentUser.Fear) - (0.8 * currentUser.Sadness) - (0.2 * currentUser.Disgust)) / numberOfTones);
+                currentUser.Y = 50 + (int)Math.Ceiling(50 * ((0.9 * currentUser.Joy) - (0.8 * currentUser.Anger) - (0.6 * currentUser.Fear) - (0.4 * currentUser.Sadness) - (0.7 * currentUser.Disgust)) / numberOfTones);
 
-            currentUser.X = (int)((0.4 * x) + (0.6 * currentUser.X));
-            currentUser.Y = (int)((0.4 * y) + (0.6 * currentUser.Y));
+                currentUser.X = Math.Max(currentUser.X, 0);
+                currentUser.X = Math.Min(currentUser.X, 100);
+
+                currentUser.Y = Math.Max(currentUser.Y, 0);
+                currentUser.Y = Math.Min(currentUser.Y, 100);
+            }
 
             List<User> updatedUsers = new List<User>();
             string finalX = string.Empty;
@@ -326,17 +369,7 @@ namespace Microsoft.BotBuilderSamples
 
             userName = userName.Remove(userName.Length - 1);
             state.Users = updatedUsers;
-            /**
-            List<int> updatedRadius = new List<int>();
-            state.Radius.ForEach(radius => updatedRadius.Add(radius - 10));
-            updatedRadius.Add(100);
-            state.Radius = updatedRadius;
 
-            string radiusString = string.Empty;
-            state.Radius.ForEach(radius => radiusString += radius + ",");
-
-            radiusString = radiusString.Remove(radiusString.Length - 1);
-    */
             finalX = finalX.Remove(finalX.Length - 1);
             finalY = finalY.Remove(finalY.Length - 1);
 
@@ -344,7 +377,7 @@ namespace Microsoft.BotBuilderSamples
 
             List<CardAction> cardButtons = new List<CardAction>()
             {
-                new CardAction() { Title = "Yes, I want to see our current state.", Type = ActionTypes.ImBack, Value = "Yes, I want to see our current state." },
+                new CardAction() { Title = "Yes", Type = ActionTypes.ImBack, Value = "Yes, I want to see our current state." },
             };
 
             HeroCard heroCard = new HeroCard

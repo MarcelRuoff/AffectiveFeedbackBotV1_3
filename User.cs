@@ -15,6 +15,16 @@ namespace EchoBotWithCounter
 
         public int Y { get; set; } = 50;
 
+        public double Joy { get; set; } = 0;
+
+        public double Anger { get; set; } = 0;
+
+        public double Fear { get; set; } = 0;
+
+        public double Sadness { get; set; } = 0;
+
+        public double Disgust { get; set; } = 0;
+
         public User(string id)
         {
             UserId = id;
