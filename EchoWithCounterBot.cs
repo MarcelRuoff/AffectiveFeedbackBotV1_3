@@ -207,7 +207,7 @@ namespace Microsoft.BotBuilderSamples
                             }
                         }
 
-                        if (user1.X >= 50 && user1.X < 75 && user1.Y < 30 && responseText == string.Empty)
+                        if (user1.X >= 50 && user1.X < 75 && user1.Y < 45 && responseText == string.Empty)
                         {
                             Random random = new Random();
                             int caseSwitch = random.Next(1, 4);
@@ -231,7 +231,7 @@ namespace Microsoft.BotBuilderSamples
 
                     foreach (User user1 in state.Users)
                     {
-                        if (user1.X < 25 && user1.Y < 40 && responseText == string.Empty)
+                        if (user1.X < 25 && user1.Y < 50 && responseText == string.Empty)
                         {
                             Random random = new Random();
                             int caseSwitch = random.Next(1, 2);
@@ -249,7 +249,7 @@ namespace Microsoft.BotBuilderSamples
 
                     foreach (User user1 in state.Users)
                     {
-                        if (user1.X >= 75 && user1.Y < 35 && responseText == string.Empty)
+                        if (user1.X >= 75 && user1.Y < 50 && responseText == string.Empty)
                         {
                             Random random = new Random();
                             int caseSwitch = random.Next(1, 4);
@@ -273,7 +273,7 @@ namespace Microsoft.BotBuilderSamples
 
                     foreach (User user1 in state.Users)
                     {
-                        if (user1.X >= 25 && user1.X < 50 && user1.Y < 30 && responseText == string.Empty)
+                        if (user1.X >= 25 && user1.X < 50 && user1.Y < 45 && responseText == string.Empty)
                         {
                             Random random = new Random();
                             int caseSwitch = random.Next(1, 2);
@@ -286,14 +286,6 @@ namespace Microsoft.BotBuilderSamples
                                     responseText = "Just keep discussing - you will get the hang of it"; // disgusted
                                     break;
                             }
-                        }
-                    }
-
-                    foreach (User user1 in state.Users)
-                    {
-                        if (user1.X >= 70 && user1.Y >= 40 && user1.Y < 50 && responseText == string.Empty)
-                        {
-                            responseText = "You're doing great. \n \U0001F917"; // aroused
                         }
                     }
 
@@ -337,11 +329,11 @@ namespace Microsoft.BotBuilderSamples
             string[] userNames = new string[state.Users.Count];
             string userName = string.Empty;
 
-            currentUser.Joy = (0.6 * currentUser.Joy) + (0.4 * postReponse.Emotion.Document.Emotion.Joy.Value);
-            currentUser.Anger = (0.6 * currentUser.Anger) + (0.4 * postReponse.Emotion.Document.Emotion.Anger.Value);
-            currentUser.Sadness = (0.6 * currentUser.Sadness) + (0.4 * postReponse.Emotion.Document.Emotion.Sadness.Value);
-            currentUser.Fear = (0.6 * currentUser.Fear) + (0.4 * postReponse.Emotion.Document.Emotion.Fear.Value);
-            currentUser.Disgust = (0.6 * currentUser.Disgust) + (0.4 * postReponse.Emotion.Document.Emotion.Disgust.Value);
+            currentUser.Joy = (0.4 * currentUser.Joy) + (0.6 * postReponse.Emotion.Document.Emotion.Joy.Value);
+            currentUser.Anger = (0.4 * currentUser.Anger) + (0.6 * postReponse.Emotion.Document.Emotion.Anger.Value);
+            currentUser.Sadness = (0.4 * currentUser.Sadness) + (0.6 * postReponse.Emotion.Document.Emotion.Sadness.Value);
+            currentUser.Fear = (0.4 * currentUser.Fear) + (0.6 * postReponse.Emotion.Document.Emotion.Fear.Value);
+            currentUser.Disgust = (0.4 * currentUser.Disgust) + (0.6 * postReponse.Emotion.Document.Emotion.Disgust.Value);
 
             // int numberOfTones = (int)(Math.Ceiling(currentUser.Joy) + Math.Ceiling(currentUser.Anger) + Math.Ceiling(currentUser.Fear) + Math.Ceiling(currentUser.Sadness) + Math.Ceiling(currentUser.Disgust));
             double numberOfTones = Math.Max(currentUser.Joy + currentUser.Anger + currentUser.Fear + currentUser.Sadness + currentUser.Disgust, 1);
