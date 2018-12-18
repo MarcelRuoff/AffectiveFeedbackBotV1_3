@@ -41,5 +41,7 @@ namespace Microsoft.BotBuilderSamples
         public bool SendImage { get; set; } = false;
 
         public string GroupName { get; set; } = "Group1";
+
+        public bool ChatbotOn { get; set; } = true;
     }
 }

@@ -9,8 +9,6 @@ using System.Threading.Tasks;
 using EchoBotWithCounter;
 using IBM.WatsonDeveloperCloud.NaturalLanguageUnderstanding.v1;
 using IBM.WatsonDeveloperCloud.NaturalLanguageUnderstanding.v1.Model;
-using IBM.WatsonDeveloperCloud.ToneAnalyzer.v3;
-using IBM.WatsonDeveloperCloud.ToneAnalyzer.v3.Model;
 using IBM.WatsonDeveloperCloud.Util;
 using Microsoft.Bot.Builder;
 using Microsoft.Bot.Schema;
@@ -78,6 +76,7 @@ namespace Microsoft.BotBuilderSamples
                 var state = await _accessors.CounterState.GetAsync(turnContext, () => new CounterState());
 
                 bool exist = false;
+                bool responseExists = false;
                 bool notAdmin = true;
                 User currentUser = new User();
                 TimeSpan difference = DateTime.Now - state.Date;
@@ -91,6 +90,14 @@ namespace Microsoft.BotBuilderSamples
                     if (turnContext.Activity.Text.StartsWith("mysql-database:"))
                     {
                         state.GroupName = turnContext.Activity.Text.Substring(16);
+                    }
+                    else if (turnContext.Activity.Text.StartsWith("Chatbot-turn-off"))
+                    {
+                        state.ChatbotOn = false;
+                    }
+                    else if (turnContext.Activity.Text.StartsWith("Chatbot-turn-on"))
+                    {
+                        state.ChatbotOn = true;
                     }
                 }
                 else if (turnContext.Activity.Text == "Yes, I want to see our current state.")
@@ -290,12 +297,17 @@ namespace Microsoft.BotBuilderSamples
                         }
                     }
 
+                    if (responseText != string.Empty)
+                    {
+                        responseExists = true;
+                    }
+
                     heroCard.Title = responseText;
 
                     response.Attachments = new List<Attachment>() { heroCard.ToAttachment() };
                 }
 
-                if (notAdmin && (difference >= state.NeededDifference || state.SendImage))
+                if (state.ChatbotOn && notAdmin && ((difference >= state.NeededDifference && responseExists) || state.SendImage))
                 {
                     await turnContext.SendActivityAsync(response);
                     if (!state.SendImage)
@@ -373,7 +385,9 @@ namespace Microsoft.BotBuilderSamples
             finalX = finalX.Remove(finalX.Length - 1);
             finalY = finalY.Remove(finalY.Length - 1);
 
-            state.ScatterURL = "https://chart.googleapis.com/chart?cht=s&chs=470x400&chm=R,d10300,0,0.5,1|R,ffd800,0,0,0.5|r,008000,0,1,0.5&chco=000000|0c00fc|5700a3,ffffff&chxt=x,x,y,y&chdl=" + userName + "&chxr=0,-1,1|1,-1,1|2,-1,1|3,-1,1&chxl=1:|low%20arousal|high%20arousal|3:|displeasure|pleasure&chxs=0,ff0000|1,ff0000|2,0000ff|3,0000ff&chd=t:" + finalX + "|" + finalY;
+            int numberOfUsers = state.Users.Count;
+
+            state.ScatterURL = "https://chart.googleapis.com/chart?cht=s&chs=470x400&chem=y;s=bubble_text_small;d=bbT,Joy,FFFFFF;dp=" + numberOfUsers + "|chem=y;s=bubble_text_small;d=bbT,Anger,FFFFFF;dp=" + (numberOfUsers + 1) + "|chem=y;s=bubble_text_small;d=bbT,Sadness,FFFFFF;dp=" + (numberOfUsers + 2) + "|chem=y;s=bubble_text_small;d=bbT,Fear,FFFFFF;dp=" + (numberOfUsers + 3) + "|chem=y;s=bubble_text_small;d=bbT,Disgust,FFFFFF;dp=" + (numberOfUsers + 4) + "&chm=R,d10300,0,0.5,1|R,ffd800,0,0,0.5|r,008000,0,1,0.5&chco=000000|0c00fc|5700a3,ffffff&chxt=x,x,y,y&chdl=" + userName + "&chxr=0,-1,1|1,-1,1|2,-1,1|3,-1,1&chxl=1:|low%20arousal|high%20arousal|3:|displeasure|pleasure&chxs=0,ff0000|1,ff0000|2,0000ff|3,0000ff&chd=t:" + finalX + ",75,60,2,85,25|" + finalY + ",95,5,20,15,5";
 
             List<CardAction> cardButtons = new List<CardAction>()
             {
