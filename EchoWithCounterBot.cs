@@ -209,7 +209,7 @@ namespace Microsoft.BotBuilderSamples
                         if (user1.X >= 50 && user1.X < 75 && user1.Y < 45 && responseText == string.Empty)
                         {
                             Random random = new Random();
-                            int caseSwitch = random.Next(1, 5);
+                            int caseSwitch = random.Next(1, 4);
                             switch (caseSwitch)
                             {
                                 case 1:
@@ -233,7 +233,7 @@ namespace Microsoft.BotBuilderSamples
                         if (user1.X < 25 && user1.Y < 50 && responseText == string.Empty)
                         {
                             Random random = new Random();
-                            int caseSwitch = random.Next(1, 3);
+                            int caseSwitch = random.Next(1, 2);
                             switch (caseSwitch)
                             {
                                 case 1:
@@ -251,7 +251,7 @@ namespace Microsoft.BotBuilderSamples
                         if (user1.X >= 75 && user1.Y < 50 && responseText == string.Empty)
                         {
                             Random random = new Random();
-                            int caseSwitch = random.Next(1, 5);
+                            int caseSwitch = random.Next(1, 4);
                             switch (caseSwitch)
                             {
                                 case 1:
@@ -275,7 +275,7 @@ namespace Microsoft.BotBuilderSamples
                         if (user1.X >= 25 && user1.X < 50 && user1.Y < 45 && responseText == string.Empty)
                         {
                             Random random = new Random();
-                            int caseSwitch = random.Next(1, 3);
+                            int caseSwitch = random.Next(1, 2);
                             switch (caseSwitch)
                             {
                                 case 1:
