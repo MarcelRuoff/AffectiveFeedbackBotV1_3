@@ -140,7 +140,7 @@ namespace Microsoft.BotBuilderSamples
                         }
                         else if (turnContext.Activity.From.Name == "zayo")
                         {
-                            currentUser.UserName = "GroundPolice";
+                            currentUser.UserName = "Police";
                         }
                         else if (turnContext.Activity.From.Name == "sihicracip")
                         {
@@ -202,7 +202,6 @@ namespace Microsoft.BotBuilderSamples
                             double distance = Math.Abs(Math.Sqrt(Math.Pow(user1.X - user2.X, 2) + Math.Pow(user1.Y - user2.Y, 2)));
                             if (distance > 100 && responseText == string.Empty)
                             {
-
                                 responseText = "Your team mood is dispersed.";
                             }
                         }
@@ -210,7 +209,7 @@ namespace Microsoft.BotBuilderSamples
                         if (user1.X >= 50 && user1.X < 75 && user1.Y < 45 && responseText == string.Empty)
                         {
                             Random random = new Random();
-                            int caseSwitch = random.Next(1, 4);
+                            int caseSwitch = random.Next(1, 5);
                             switch (caseSwitch)
                             {
                                 case 1:
@@ -234,7 +233,7 @@ namespace Microsoft.BotBuilderSamples
                         if (user1.X < 25 && user1.Y < 50 && responseText == string.Empty)
                         {
                             Random random = new Random();
-                            int caseSwitch = random.Next(1, 2);
+                            int caseSwitch = random.Next(1, 3);
                             switch (caseSwitch)
                             {
                                 case 1:
@@ -252,7 +251,7 @@ namespace Microsoft.BotBuilderSamples
                         if (user1.X >= 75 && user1.Y < 50 && responseText == string.Empty)
                         {
                             Random random = new Random();
-                            int caseSwitch = random.Next(1, 4);
+                            int caseSwitch = random.Next(1, 5);
                             switch (caseSwitch)
                             {
                                 case 1:
@@ -276,7 +275,7 @@ namespace Microsoft.BotBuilderSamples
                         if (user1.X >= 25 && user1.X < 50 && user1.Y < 45 && responseText == string.Empty)
                         {
                             Random random = new Random();
-                            int caseSwitch = random.Next(1, 2);
+                            int caseSwitch = random.Next(1, 3);
                             switch (caseSwitch)
                             {
                                 case 1:
