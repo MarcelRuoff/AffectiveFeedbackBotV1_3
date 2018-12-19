@@ -104,7 +104,7 @@ namespace Microsoft.BotBuilderSamples
                 {
                     HeroCard heroCard = new HeroCard
                     {
-                        Title = "You're current State",
+                        Title = "Your current State",
                         Images = new List<CardImage> { new CardImage(state.ScatterURL) },
                     };
 
@@ -209,11 +209,16 @@ namespace Microsoft.BotBuilderSamples
                         if (user1.X >= 50 && user1.X < 75 && user1.Y < 45 && responseText == string.Empty)
                         {
                             Random random = new Random();
-                            int caseSwitch = random.Next(1, 4);
+                            int caseSwitch = random.Next(1, 5);
+                            if (caseSwitch > 4)
+                            {
+                                caseSwitch = 4;
+                            }
+
                             switch (caseSwitch)
                             {
                                 case 1:
-                                    responseText = "You may feel currently upset, but you can do this"; // angry
+                                    responseText = "You may feel currently upset, but you can do this."; // angry
                                     break;
                                 case 2:
                                     responseText = "It sounds like some felt fairly frustrated choosing the fields."; // angry
@@ -222,7 +227,7 @@ namespace Microsoft.BotBuilderSamples
                                     responseText = "You're working hard. Keep on trying.  \n \U0001F917"; // angry
                                     break;
                                 case 4:
-                                    responseText = "Keep moving forward and you will succeed"; // angry
+                                    responseText = "Keep moving forward and you will succeed."; // angry
                                     break;
                             }
                         }
@@ -233,7 +238,12 @@ namespace Microsoft.BotBuilderSamples
                         if (user1.X < 25 && user1.Y < 50 && responseText == string.Empty)
                         {
                             Random random = new Random();
-                            int caseSwitch = random.Next(1, 2);
+                            int caseSwitch = random.Next(1, 3);
+                            if (caseSwitch > 2)
+                            {
+                                caseSwitch = 2;
+                            }
+
                             switch (caseSwitch)
                             {
                                 case 1:
@@ -251,14 +261,19 @@ namespace Microsoft.BotBuilderSamples
                         if (user1.X >= 75 && user1.Y < 50 && responseText == string.Empty)
                         {
                             Random random = new Random();
-                            int caseSwitch = random.Next(1, 4);
+                            int caseSwitch = random.Next(1, 5);
+                            if (caseSwitch > 4)
+                            {
+                                caseSwitch = 4;
+                            }
+
                             switch (caseSwitch)
                             {
                                 case 1:
                                     responseText = "Don't worry. You can do this. \n \U0001F917"; // afraid
                                     break;
                                 case 2:
-                                    responseText = "Just keep discussing - you will get the hang of it"; // afraid
+                                    responseText = "Just keep discussing - you will get the hang of it."; // afraid
                                     break;
                                 case 3:
                                     responseText = "Don't let your fears to stand in your way."; // afraid
@@ -275,7 +290,12 @@ namespace Microsoft.BotBuilderSamples
                         if (user1.X >= 25 && user1.X < 50 && user1.Y < 45 && responseText == string.Empty)
                         {
                             Random random = new Random();
-                            int caseSwitch = random.Next(1, 2);
+                            int caseSwitch = random.Next(1, 3);
+                            if (caseSwitch > 2)
+                            {
+                                caseSwitch = 2;
+                            }
+
                             switch (caseSwitch)
                             {
                                 case 1:
