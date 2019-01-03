@@ -163,6 +163,10 @@ namespace Microsoft.BotBuilderSamples
                         {
                             currentUser.UserName = "Member_1";
                         }
+                        else if (turnContext.Activity.From.Name == "boysenberry56")
+                        {
+                            currentUser.UserName = "Member_3";
+                        }
                         else
                         {
                             currentUser.UserName = turnContext.Activity.From.Name;
