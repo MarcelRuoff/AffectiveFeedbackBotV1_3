@@ -36,7 +36,7 @@ namespace Microsoft.BotBuilderSamples
 
         public string CollectionName { get; set; } = string.Empty;
 
-        public TimeSpan NeededDifference { get; set; } = TimeSpan.FromSeconds(45);
+        public TimeSpan NeededDifference { get; set; } = TimeSpan.FromSeconds(75);
 
         public string ScatterURL { get; set; } = string.Empty;
 
@@ -44,6 +44,6 @@ namespace Microsoft.BotBuilderSamples
 
         public string GroupName { get; set; } = "Group2";
 
-        public bool ChatbotOn { get; set; } = true;
+        public bool ChatbotOn { get; set; } = false;
     }
 }

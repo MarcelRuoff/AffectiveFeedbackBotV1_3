@@ -117,6 +117,10 @@ namespace Microsoft.BotBuilderSamples
                         state.DateImage = DateTime.Now;
                     }
                 }
+                else if (turnContext.Activity.Text == "What place do you prefer?")
+                {
+                    state.ChatbotOn = true;
+                }
                 else if (turnContext.Activity.Text == "Gib den usernamen aus!.!")
                 {
                     response.Text += turnContext.Activity.From.Id;
@@ -413,7 +417,7 @@ namespace Microsoft.BotBuilderSamples
 
             int numberOfUsers = state.Users.Count;
 
-            state.ScatterURL = "https://chart.googleapis.com/chart?cht=s&chs=470x400&chem=y;s=bubble_text_small;d=bbT,Joy,FFFFFF;dp=" + numberOfUsers + "|chem=y;s=bubble_text_small;d=bbT,Anger,FFFFFF;dp=" + (numberOfUsers + 1) + "|chem=y;s=bubble_text_small;d=bbT,Sadness,FFFFFF;dp=" + (numberOfUsers + 2) + "|chem=y;s=bubble_text_small;d=bbT,Fear,FFFFFF;dp=" + (numberOfUsers + 3) + "|chem=y;s=bubble_text_small;d=bbT,Disgust,FFFFFF;dp=" + (numberOfUsers + 4) + "&chm=R,d10300,0,0.5,1|R,ffd800,0,0,0.5|r,008000,0,1,0.5&chco=000000|0c00fc|5700a3,ffffff&chxt=x,x,y,y&chdl=" + userName + "&chxr=0,-1,1,0.5|1,-1,1|2,-1,1,0.5|3,-1,1&chxl=1:|low%20arousal|high%20arousal|3:|displeasure|pleasure&chxs=0,ff0000|1,ff0000,15|2,0000ff|3,0000ff,15&chd=t:" + finalX + ",75,60,2,85,25|" + finalY + ",95,5,20,15,5";
+            state.ScatterURL = "https://chart.googleapis.com/chart?cht=s&chs=470x400&chem=y;s=bubble_text_small;d=bbT,Joy,FFFFFF;dp=" + numberOfUsers + "|chem=y;s=bubble_text_small;d=bbT,Anger,FFFFFF;dp=" + (numberOfUsers + 1) + "|chem=y;s=bubble_text_small;d=bbT,Sadness,FFFFFF;dp=" + (numberOfUsers + 2) + "|chem=y;s=bubble_text_small;d=bbT,Fear,FFFFFF;dp=" + (numberOfUsers + 3) + "|chem=y;s=bubble_text_small;d=bbT,Disgust,FFFFFF;dp=" + (numberOfUsers + 4) + "&chm=R,d10300,0,0.5,1|R,ffd800,0,0,0.5|r,008000,0,1,0.5&chco=000000|0c00fc|5700a3,ffffff&chxt=x,x,y,y&chdl=" + userName + "&chxr=0,-1,1,0.5|1,-1,1|2,-1,1,0.5|3,-1,1&chxl=1:|Low%20Arousal|High%20Arousal|3:|Displeasure|Pleasure&chxs=0,ff0000|1,ff0000,15|2,0000ff|3,0000ff,15&chd=t:" + finalX + ",75,60,2,85,25|" + finalY + ",95,5,20,15,5";
 
             List<CardAction> cardButtons = new List<CardAction>()
             {
