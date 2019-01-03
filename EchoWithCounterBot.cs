@@ -80,6 +80,7 @@ namespace Microsoft.BotBuilderSamples
                 bool notAdmin = true;
                 User currentUser = new User();
                 TimeSpan difference = DateTime.Now - state.Date;
+                TimeSpan differenceImage = DateTime.Now - state.DateImage;
 
                 // SqlConnection myConnection = new SqlConnection("Server=tcp:thesis-affective.database.windows.net,1433;Initial Catalog=Bachelorarbeit;Persist Security Info=False;User ID=issd-affective;Password=zWBR5IRI3u7zUzjMqADZ;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;");
 
@@ -110,7 +111,11 @@ namespace Microsoft.BotBuilderSamples
 
                     response.Attachments = new List<Attachment>() { heroCard.ToAttachment() };
 
-                    state.SendImage = true;
+                    if (differenceImage > TimeSpan.FromSeconds(10))
+                    {
+                        state.SendImage = true;
+                        state.DateImage = DateTime.Now;
+                    }
                 }
                 else if (turnContext.Activity.Text == "Gib den usernamen aus!.!")
                 {
@@ -400,11 +405,11 @@ namespace Microsoft.BotBuilderSamples
 
             int numberOfUsers = state.Users.Count;
 
-            state.ScatterURL = "https://chart.googleapis.com/chart?cht=s&chs=470x400&chem=y;s=bubble_text_small;d=bbT,Joy,FFFFFF;dp=" + numberOfUsers + "|chem=y;s=bubble_text_small;d=bbT,Anger,FFFFFF;dp=" + (numberOfUsers + 1) + "|chem=y;s=bubble_text_small;d=bbT,Sadness,FFFFFF;dp=" + (numberOfUsers + 2) + "|chem=y;s=bubble_text_small;d=bbT,Fear,FFFFFF;dp=" + (numberOfUsers + 3) + "|chem=y;s=bubble_text_small;d=bbT,Disgust,FFFFFF;dp=" + (numberOfUsers + 4) + "&chm=R,d10300,0,0.5,1|R,ffd800,0,0,0.5|r,008000,0,1,0.5&chco=000000|0c00fc|5700a3,ffffff&chxt=x,x,y,y&chdl=" + userName + "&chxr=0,-1,1|1,-1,1|2,-1,1|3,-1,1&chxl=1:|low%20arousal|high%20arousal|3:|displeasure|pleasure&chxs=0,ff0000|1,ff0000|2,0000ff|3,0000ff&chd=t:" + finalX + ",75,60,2,85,25|" + finalY + ",95,5,20,15,5";
+            state.ScatterURL = "https://chart.googleapis.com/chart?cht=s&chs=470x400&chem=y;s=bubble_text_small;d=bbT,Joy,FFFFFF;dp=" + numberOfUsers + "|chem=y;s=bubble_text_small;d=bbT,Anger,FFFFFF;dp=" + (numberOfUsers + 1) + "|chem=y;s=bubble_text_small;d=bbT,Sadness,FFFFFF;dp=" + (numberOfUsers + 2) + "|chem=y;s=bubble_text_small;d=bbT,Fear,FFFFFF;dp=" + (numberOfUsers + 3) + "|chem=y;s=bubble_text_small;d=bbT,Disgust,FFFFFF;dp=" + (numberOfUsers + 4) + "&chm=R,d10300,0,0.5,1|R,ffd800,0,0,0.5|r,008000,0,1,0.5&chco=000000|0c00fc|5700a3,ffffff&chxt=x,x,y,y&chdl=" + userName + "&chxr=0,-1,1,0.5|1,-1,1|2,-1,1,0.5|3,-1,1&chxl=1:|low%20arousal|high%20arousal|3:|displeasure|pleasure&chxs=0,ff0000|1,ff0000,15|2,0000ff|3,0000ff,15&chd=t:" + finalX + ",75,60,2,85,25|" + finalY + ",95,5,20,15,5";
 
             List<CardAction> cardButtons = new List<CardAction>()
             {
-                new CardAction() { Title = "Yes", Type = ActionTypes.ImBack, Value = "Yes, I want to see our current state." },
+                new CardAction() { Title = "Yes", Type = ActionTypes.PostBack, Value = "Yes, I want to see our current state." },
             };
 
             HeroCard heroCard = new HeroCard

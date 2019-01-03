@@ -32,6 +32,8 @@ namespace Microsoft.BotBuilderSamples
 
         public DateTime Date { get; set; } = DateTime.Now;
 
+        public DateTime DateImage { get; set; } = DateTime.Now;
+
         public string CollectionName { get; set; } = string.Empty;
 
         public TimeSpan NeededDifference { get; set; } = TimeSpan.FromSeconds(45);
