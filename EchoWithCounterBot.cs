@@ -81,7 +81,7 @@ namespace Microsoft.BotBuilderSamples
                 User currentUser = new User();
                 TimeSpan difference = DateTime.Now - state.Date;
 
-                SqlConnection myConnection = new SqlConnection("Server=tcp:thesis-affective.database.windows.net,1433;Initial Catalog=Bachelorarbeit;Persist Security Info=False;User ID=issd-affective;Password=zWBR5IRI3u7zUzjMqADZ;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;");
+                // SqlConnection myConnection = new SqlConnection("Server=tcp:thesis-affective.database.windows.net,1433;Initial Catalog=Bachelorarbeit;Persist Security Info=False;User ID=issd-affective;Password=zWBR5IRI3u7zUzjMqADZ;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;");
 
                 if (turnContext.Activity.From.Id == "UECMZ1UKV:TEAAW1S5V" || turnContext.Activity.From.Id == "UEF40P8QP:TEDA8FEEL")
                 {
@@ -180,6 +180,7 @@ namespace Microsoft.BotBuilderSamples
 
                     var result = understandingService.Analyze(parameters);
 
+                    /*
                     string queryString = "INSERT INTO " + state.GroupName + " (time, id, text, result) Values(@time, @id, @text, @result)";
 
                     SqlCommand command = new SqlCommand(queryString, myConnection);
@@ -191,6 +192,7 @@ namespace Microsoft.BotBuilderSamples
                     myConnection.Open();
                     command.ExecuteNonQuery();
                     command.Connection.Close();
+                    */
 
                     HeroCard heroCard = EmpathyResponseGenerator(result, state, currentUser);
 
