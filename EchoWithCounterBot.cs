@@ -236,7 +236,7 @@ namespace Microsoft.BotBuilderSamples
                                     responseText = "You may feel currently upset, but you can do this."; // angry
                                     break;
                                 case 2:
-                                    responseText = "It sounds like some felt fairly frustrated choosing the fields."; // angry
+                                    responseText = "It sounds like some felt fairly frustrated."; // angry
                                     break;
                                 case 3:
                                     responseText = "You're working hard. Keep on trying.  \n \U0001F917"; // angry
@@ -291,7 +291,7 @@ namespace Microsoft.BotBuilderSamples
                                     responseText = "Just keep discussing - you will get the hang of it."; // afraid
                                     break;
                                 case 3:
-                                    responseText = "Don't let your fears to stand in your way."; // afraid
+                                    responseText = "Don't let your fears stand in your way."; // afraid
                                     break;
                                 case 4:
                                     responseText = "Believe in yourself. \n \U0001F917"; // afraid
